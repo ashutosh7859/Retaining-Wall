@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RetainingWall.Core</name>
+    </assembly>
+    <members>
+        <member name="T:RetainingWall.Core.CoreAssembly">
+            <summary>
+            Identifies the Autodesk-free core assembly for retaining wall table, parameter, and geometry logic.
+            </summary>
+        </member>
+        <member name="F:RetainingWall.Core.CoreAssembly.AssemblyName">
+            <summary>
+            Gets the expected assembly name for the pure core project.
+            </summary>
+        </member>
+        <member name="T:RetainingWall.Core.GeometryLink">
+            <summary>
+            Represents a generated link between two points for the retaining wall geometry.
+            </summary>
+        </member>
+        <member name="T:RetainingWall.Core.GeometryPoint">
+            <summary>
+            Represents a generated 2D point for the retaining wall geometry.
+            </summary>
+        </member>
+        <member name="T:RetainingWall.Core.GeometryResult">
+            <summary>
+            Represents the complete generated geometry for the retaining wall.
+            </summary>
+        </member>
+        <member name="T:RetainingWall.Core.GeometryShape">
+            <summary>
+            Represents a generated closed shape for the retaining wall geometry.
+            </summary>
+        </member>
+        <member name="T:RetainingWall.Core.Side">
+            <summary>
+            Specifies the side of the road on which the retaining wall is constructed.
+            </summary>
+        </member>
+        <member name="F:RetainingWall.Core.Side.Left">
+            <summary>Left side.</summary>
+        </member>
+        <member name="F:RetainingWall.Core.Side.Right">
+            <summary>Right side.</summary>
+        </member>
+        <member name="T:RetainingWall.Core.WallCaseTable">
+            <summary>
+            Provides access to the standard retaining wall case table.
+            </summary>
+        </member>
+        <member name="M:RetainingWall.Core.WallCaseTable.GetDimensions(System.Int32)">
+            <summary>
+            Gets the standard dimensions for the specified wall case.
+            Dimensions are converted from mm to metres internally.
+            </summary>
+            <param name="wallCase">The integer wall case (2 through 12).</param>
+            <returns>A <see cref="T:RetainingWall.Core.WallDimensions"/> instance containing the dimensions in metres.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the wall case is not between 2 and 12.</exception>
+        </member>
+        <member name="T:RetainingWall.Core.WallDimensionOverrides">
+            <summary>
+            Represents overrides for standard retaining wall dimensions.
+            </summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensionOverrides.UseDimensionOverrides">
+            <summary>Gets or sets a value indicating whether dimension overrides should be used.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensionOverrides.OverrideA">
+            <summary>Override for Dimension A in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensionOverrides.OverrideB">
+            <summary>Override for Dimension B in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensionOverrides.OverrideC">
+            <summary>Override for Dimension C in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensionOverrides.OverrideD">
+            <summary>Override for Dimension D in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensionOverrides.OverrideE">
+            <summary>Override for Dimension E in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensionOverrides.OverrideF">
+            <summary>Override for Dimension F in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensionOverrides.OverrideG">
+            <summary>Override for Dimension G in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensionOverrides.OverrideH1">
+            <summary>Override for Dimension H1 in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensionOverrides.OverrideH2">
+            <summary>Override for Dimension H2 in metres.</summary>
+        </member>
+        <member name="M:RetainingWall.Core.WallDimensionOverrides.Apply(RetainingWall.Core.WallDimensions)">
+            <summary>
+            Applies the overrides to the specified base dimensions.
+            If <see cref="P:RetainingWall.Core.WallDimensionOverrides.UseDimensionOverrides"/> is false, the base dimensions are returned.
+            If an override value is greater than zero, it replaces the base dimension.
+            </summary>
+            <param name="baseDimensions">The standard dimensions from the wall case table.</param>
+            <returns>A new <see cref="T:RetainingWall.Core.WallDimensions"/> instance with overrides applied.</returns>
+        </member>
+        <member name="T:RetainingWall.Core.WallDimensions">
+            <summary>
+            Represents the standard dimensions for a retaining wall case.
+            All values are stored internally in metres.
+            </summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensions.A">
+            <summary>Dimension A in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensions.B">
+            <summary>Dimension B in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensions.C">
+            <summary>Dimension C in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensions.D">
+            <summary>Dimension D in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensions.E">
+            <summary>Dimension E in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensions.F">
+            <summary>Dimension F in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensions.G">
+            <summary>Dimension G in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensions.H1">
+            <summary>Dimension H1 in metres.</summary>
+        </member>
+        <member name="P:RetainingWall.Core.WallDimensions.H2">
+            <summary>Dimension H2 in metres.</summary>
+        </member>
+        <member name="M:RetainingWall.Core.WallDimensions.#ctor(System.Double,System.Double,System.Double,System.Double,System.Double,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RetainingWall.Core.WallDimensions"/> class with values in metres.
+            </summary>
+        </member>
+        <member name="T:RetainingWall.Core.WallGeometryGenerator">
+            <summary>
+            Generates retaining wall geometry based on parameters.
+            </summary>
+        </member>
+    </members>
+</doc>

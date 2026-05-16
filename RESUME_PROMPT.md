@@ -1,78 +1,64 @@
-# Resume Prompt – Phase 6
+# Resume Prompt – Phase 7
 
-**Last updated:** 2026-05-16 (Phase 5 complete)
+**Last updated:** 2026-05-16 (Phase 6 complete, bundle deployment complete)
 
 ## Situation
 
-The Civil 3D adapter is fully wired to the real Autodesk API and compiles successfully. The subassembly can now generate corridor geometry (points, links, shapes) with correct codes and mirroring. Phase 5 verified that `SATemplate` inheritance works, `CorridorState` is accessible, and parameters are registered.
+The bundle is now deployed to `C:\ProgramData\Autodesk\ApplicationPlugins\RoadEdgeRetainingWall.bundle/` and ready for testing in Civil 3D 2026. All source DLLs have been compiled in Release mode, copied to the bundle, and PackageContents.xml has been properly configured with correct paths and command declarations.
 
-**Next objective:** Implement the `RW_CREATE_SURFACES` helper command (Phase 6).
+**Next objective:** Perform manual validation in Civil 3D to confirm the subassembly loads, registers, and functions correctly.
 
 ## Context Refresh
 
 Read these first (in order):
 1. `RetainingWallSubassembly_Plan.md` — architecture, wall case table, codes, surfaces strategy
-2. `IMPLEMENTATION_STATUS.md` — completion snapshot
-3. `NEXT_STEPS.md` — prioritized work queue
-4. `DECISIONS.md` — past trade-offs
-5. `RISK_REGISTER.md` — closed risks and any new ones
-6. `VALIDATION_LOG.md` — what was verified so far
+2. `IMPLEMENTATION_STATUS.md` — completion snapshot (now includes Phase 7 bundle deployment)
+3. `PHASE_7_TESTING.md` — detailed manual testing checklist and troubleshooting
+4. `NEXT_STEPS.md` — Phase 7 validation tasks
+5. `VALIDATION_LOG.md` — what has been verified so far
+6. `DECISIONS.md` — past trade-offs
+7. `RISK_REGISTER.md` — risks and mitigations
 
-## Phase 6 Scope: RW_CREATE_SURFACES Command
+## Phase 7 Scope: Manual Civil 3D Validation
 
 ### Objectives
-1. Create a new command class `RW_CREATE_SURFACES` in `RetainingWall.Commands`.
-2. Command flow:
-   - Prompt user to select a corridor from the current document.
-   - Create or update three retaining-wall corridor surfaces:
-     - `RW_Top_Surface`: generated from `RW_Top` links across all regions/stations
-     - `RW_Earthwork_Surface`: generated from `RW_Datum`, `RW_Backfill`, and `RW_Excavation` links
-     - `RW_Structure_Reference`: optional non-volume surface from structural links (PCC, Wall, Footing, Filter)
-3. Apply corridor extents boundary or feature-line-code boundary where API support is reliable.
-4. Do not create or modify road surfaces—keep them separate.
+1. Confirm the bundle autoloads in Civil 3D 2026 at startup or on command invocation.
+2. Verify the `RoadEdgeRetainingWall` subassembly appears in the Subassembly Selector.
+3. Create a test corridor section using the subassembly and verify geometry (points, links, shapes, codes, mirroring).
+4. Test the `RW_CREATE_SURFACES` command to confirm surface creation.
+5. Verify parameter overrides work as expected.
 
-### Technical Guidance
-- **Civil 3D API**: Use `Corridor` and `Baseline` APIs to query regions and link codes. Surfaces are created via `CivilDocument.CorridorSurfaces.Add()`.
-- **Link code filtering**: Iterate corridor regions and extract links by code name (e.g., `link.CodeName == "RW_Top"`).
-- **Boundary handling**: Experiment with `CivilDocument.FeatureLines` or `Corridor.Surfaces[].BoundaryOptions` to bind surfaces to corridor extents.
-- **Error handling**: Gracefully handle missing corridors, missing link codes, or invalid region definitions.
+### Prerequisites
+- Civil 3D 2026 installed on this machine (✓ confirmed at `C:\Program Files\Autodesk\AutoCAD 2026\acad.exe`).
+- Bundle deployed to `C:\ProgramData\Autodesk\ApplicationPlugins/` (✓ confirmed).
+- Release DLLs in `Contents/Win64/` (✓ confirmed).
+- PackageContents.xml configured (✓ confirmed, paths fixed, commands declared).
 
 ### Constraints
-- Keep road surfaces outside this command.
-- Do not introduce PKT/SAC dependency or EGL-driven wall case selection.
-- Do not redesign the architecture unless a blocker proves the current plan cannot work.
-- Keep changes scoped to the current packet.
+- Do not modify the bundle structure during testing.
+- Do not introduce PKT/SAC dependency.
+- Keep all validation results in `VALIDATION_LOG.md`.
 
-### Deliverables
-- **Code**: `RetainingWall.Commands/` updated with command class, command registration, and integration with `CommandsAssembly.cs`.
-- **Verification**: Build successfully; command loads in Civil 3D test.
-- **Documentation**: Update `docs/codes-and-surfaces.md` with surface creation workflow and link-code-to-surface mapping.
+### Deliverables (After Testing)
+- `VALIDATION_LOG.md` — updated with Phase 7 test results and any issues found
+- `IMPLEMENTATION_STATUS.md` — updated to Phase 7 Complete if all tests pass
+- `RISK_REGISTER.md` — updated if new risks emerge during testing
 
 ## How to Proceed
 
-1. **Read and understand Phase 6 in the plan** (`RetainingWallSubassembly_Plan.md`, "Surface Helper Command" section).
-2. **Design the command flow**:
-   - What input does the user provide? (corridor selection)
-   - What outputs are created? (three corridor surfaces)
-   - What intermediate steps? (link filtering, TIN generation, boundary binding)
-3. **Stub the command class** in `RetainingWall.Commands/` with method signatures.
-4. **Implement link-code filtering** first (lowest risk).
-5. **Implement corridor surface creation** using real Civil 3D surface API calls.
-6. **Test in Civil 3D** by selecting a corridor with existing retaining wall subassembly regions.
-7. **Update documentation** with the surface creation workflow.
+1. **Read this file and understand the deployment status**.
+2. **Close Civil 3D completely** if running (autoloader runs at startup only).
+3. **Launch Civil 3D 2026** fresh.
+4. **Follow the testing checklist** in `PHASE_7_TESTING.md`.
+5. **Record all results** in `VALIDATION_LOG.md`.
 
 ## Rules
 
 - Use `RetainingWallSubassembly_Plan.md` as the source of truth.
-- Continue from the first task in `NEXT_STEPS.md` only.
-- Run the smallest useful verification after each meaningful change.
-- Before stopping, update:
-  - `IMPLEMENTATION_STATUS.md` — current progress
-  - `NEXT_STEPS.md` — next prioritized tasks
-  - `DECISIONS.md` — if new decisions changed
-  - `RISK_REGISTER.md` — if risks changed
-  - `VALIDATION_LOG.md` — checks run and results
+- Refer to the testing checklist in `PHASE_7_TESTING.md` for step-by-step instructions.
+- If a test fails, consult the troubleshooting section in `PHASE_7_TESTING.md` before taking action.
+- Update status documents after testing.
 
 ---
 
-**Good luck! Questions? Re-read the plan. Still stuck? Check DECISIONS.md and RISK_REGISTER.md for context.**
+**Good luck! Questions? Re-read the plan. Still stuck? Check RISK_REGISTER.md for context.**

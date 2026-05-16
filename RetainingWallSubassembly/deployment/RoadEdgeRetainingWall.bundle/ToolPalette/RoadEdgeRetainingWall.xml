@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CUI version="20.0">
+  <Toolpalettes>
+    <Toolpalette name="Retaining Wall Subassembly" id="RW_PALETTE_001" icon_16="16" icon_24="24" icon_32="32">
+      <ToolpaletteGroup id="RW_GROUP_001" groupname="Wall Tools">
+        <ToolpaletteItem 
+          id="RW_SUBASSY_TOOL_001" 
+          name="Road Edge Retaining Wall" 
+          description="Civil 3D retaining wall subassembly starting at road edge/base point"
+          command="RW_ROAD_EDGE_RETAINING_WALL"
+          overlay="false"
+          flyout="false">
+          <Image name="RetainingWall.png" size="16"/>
+          <Image name="RetainingWall.png" size="24"/>
+          <Image name="RetainingWall.png" size="32"/>
+        </ToolpaletteItem>
+        
+        <ToolpaletteItem 
+          id="RW_CMD_TOOL_001" 
+          name="Create Surfaces" 
+          description="Create retaining wall corridor surfaces (RW_Top_Surface, RW_Earthwork_Surface, RW_Structure_Reference)"
+          command="RW_CREATE_SURFACES"
+          overlay="false"
+          flyout="false">
+          <Image name="Surface.png" size="16"/>
+          <Image name="Surface.png" size="24"/>
+          <Image name="Surface.png" size="32"/>
+        </ToolpaletteItem>
+      </ToolpaletteGroup>
+    </Toolpalette>
+  </Toolpalettes>
+  
+  <ImageLibrary>
+    <Images>
+      <!-- Placeholder image references -->
+      <!-- In production, provide actual icon files in ToolPalette/ subfolder -->
+    </Images>
+  </ImageLibrary>
+</CUI>
