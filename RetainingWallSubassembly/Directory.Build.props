@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <AutodeskInstallRoot Condition="'$(AutodeskInstallRoot)' == ''">C:\Program Files\Autodesk\AutoCAD 2026</AutodeskInstallRoot>
+    <AeccDbMgdPath Condition="'$(AeccDbMgdPath)' == '' and Exists('$(AutodeskInstallRoot)\AeccDbMgd.dll')">$(AutodeskInstallRoot)\AeccDbMgd.dll</AeccDbMgdPath>
+    <AeccDbMgdPath Condition="'$(AeccDbMgdPath)' == '' and Exists('$(AutodeskInstallRoot)\C3D\AeccDbMgd.dll')">$(AutodeskInstallRoot)\C3D\AeccDbMgd.dll</AeccDbMgdPath>
+    <AcmgdPath Condition="'$(AcmgdPath)' == ''">$(AutodeskInstallRoot)\acmgd.dll</AcmgdPath>
+    <AcdbmgdPath Condition="'$(AcdbmgdPath)' == ''">$(AutodeskInstallRoot)\acdbmgd.dll</AcdbmgdPath>
+    <AccoremgdPath Condition="'$(AccoremgdPath)' == ''">$(AutodeskInstallRoot)\accoremgd.dll</AccoremgdPath>
+    <AutodeskReferencesAvailable Condition="'$(AutodeskReferencesAvailable)' == '' and Exists('$(AeccDbMgdPath)') and Exists('$(AcmgdPath)') and Exists('$(AcdbmgdPath)') and Exists('$(AccoremgdPath)')">true</AutodeskReferencesAvailable>
+    <AutodeskReferencesAvailable Condition="'$(AutodeskReferencesAvailable)' == ''">false</AutodeskReferencesAvailable>
+  </PropertyGroup>
+</Project>

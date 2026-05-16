@@ -1,0 +1,24 @@
+<Project>
+  <PropertyGroup Condition="'$(UsesAutodeskCivil3D)' == 'true' and '$(AutodeskReferencesAvailable)' == 'true'">
+    <DefineConstants>$(DefineConstants);AUTODESK_REFERENCES_AVAILABLE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(UsesAutodeskCivil3D)' == 'true' and '$(AutodeskReferencesAvailable)' == 'true'">
+    <Reference Include="AeccDbMgd">
+      <HintPath>$(AeccDbMgdPath)</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="acmgd">
+      <HintPath>$(AcmgdPath)</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="acdbmgd">
+      <HintPath>$(AcdbmgdPath)</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="accoremgd">
+      <HintPath>$(AccoremgdPath)</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+</Project>
