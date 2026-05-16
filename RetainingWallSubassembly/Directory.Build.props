@@ -7,6 +7,11 @@
     <AcmgdPath Condition="'$(AcmgdPath)' == ''">$(AutodeskInstallRoot)\acmgd.dll</AcmgdPath>
     <AcdbmgdPath Condition="'$(AcdbmgdPath)' == ''">$(AutodeskInstallRoot)\acdbmgd.dll</AcdbmgdPath>
     <AccoremgdPath Condition="'$(AccoremgdPath)' == ''">$(AutodeskInstallRoot)\accoremgd.dll</AccoremgdPath>
+    <AeccCommonMgdPath Condition="'$(AeccCommonMgdPath)' == '' and Exists('$(AutodeskInstallRoot)\AeccCommonMgd.dll')">$(AutodeskInstallRoot)\AeccCommonMgd.dll</AeccCommonMgdPath>
+    <AeccCommonMgdPath Condition="'$(AeccCommonMgdPath)' == '' and Exists('$(AutodeskInstallRoot)\C3D\AeccCommonMgd.dll')">$(AutodeskInstallRoot)\C3D\AeccCommonMgd.dll</AeccCommonMgdPath>
+    <AecBaseMgdPath Condition="'$(AecBaseMgdPath)' == '' and Exists('$(AutodeskInstallRoot)\AecBaseMgd.dll')">$(AutodeskInstallRoot)\AecBaseMgd.dll</AecBaseMgdPath>
+    <AecBaseMgdPath Condition="'$(AecBaseMgdPath)' == '' and Exists('$(AutodeskInstallRoot)\C3D\AecBaseMgd.dll')">$(AutodeskInstallRoot)\C3D\AecBaseMgd.dll</AecBaseMgdPath>
+    <AecBaseMgdPath Condition="'$(AecBaseMgdPath)' == '' and Exists('$(AutodeskInstallRoot)\ACA\AecBaseMgd.dll')">$(AutodeskInstallRoot)\ACA\AecBaseMgd.dll</AecBaseMgdPath>
     <AutodeskReferencesAvailable Condition="'$(AutodeskReferencesAvailable)' == '' and Exists('$(AeccDbMgdPath)') and Exists('$(AcmgdPath)') and Exists('$(AcdbmgdPath)') and Exists('$(AccoremgdPath)')">true</AutodeskReferencesAvailable>
     <AutodeskReferencesAvailable Condition="'$(AutodeskReferencesAvailable)' == ''">false</AutodeskReferencesAvailable>
   </PropertyGroup>

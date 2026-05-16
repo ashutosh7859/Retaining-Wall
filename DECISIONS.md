@@ -19,14 +19,16 @@ Source of truth: `RetainingWallSubassembly_Plan.md`.
 ## Reference Paths And Assemblies
 
 - Civil 3D install root: `C:\Program Files\Autodesk\AutoCAD 2026`.
-- Autodesk references: `AeccDbMgd.dll`, `acmgd.dll`, `acdbmgd.dll`, `accoremgd.dll`.
-- `AeccDbMgd.dll` is accepted either directly under the install root or under the local `C3D` subfolder.
+- Autodesk references: `AeccDbMgd.dll`, `acmgd.dll`, `acdbmgd.dll`, `accoremgd.dll`, `AecBaseMgd.dll`, and optionally `AeccCommonMgd.dll`.
+- `AeccDbMgd.dll` and `AeccCommonMgd.dll` are found under the local `C3D` subfolder.
+- `AecBaseMgd.dll` is found under the local `ACA` subfolder; it is required for `Corridor` and `Entity` base type resolution.
+- `CorridorSurface.LinkCodes()` is a method in Civil 3D 2026 .NET API, returning a `string[]`.
+- `CorridorSurface.AddLinkCode(string code, bool addAsBreakLine)` is used to add link codes to corridor surfaces.
 - Autodesk references must use `CopyLocal=false` / `<Private>false</Private>`.
 - Autodesk references are centralized in `Directory.Build.targets` and activated by `UsesAutodeskCivil3D=true` when all local DLL paths exist.
 
 ## Open Until Proven
 
 - Exact SATemplate registration mechanics for Civil 3D 2026.
-- Reliable API method for corridor surface boundary creation.
+- Reliable API method for corridor surface boundary creation (automated via `AddCorridorExtentsBoundary` for now).
 - Whether any SAC runtime reference is unexpectedly required; current decision is no.
-- Whether MSB3277 assembly-version warnings from Autodesk managed DLL references require additional project configuration once real API code is added.

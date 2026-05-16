@@ -10,6 +10,12 @@ Source of truth: `RetainingWallSubassembly_Plan.md`.
 - Basic test result: `RetainingWall.Core.Tests passed.`
 - Verified `RetainingWall.Core.Tests` checks that `RetainingWall.Core` does not reference `AeccDbMgd`, `acmgd`, `acdbmgd`, or `accoremgd`.
 - Checked Autodesk output copying with `Get-ChildItem` filters for `*mgd*.dll` in `RetainingWall.Civil3D` and `RetainingWall.Commands` Release output folders; no Autodesk DLLs were copied.
+- **Phase 5 Adapter build success**: `RetainingWall.Civil3D` compiles against real Civil 3D 2026 DLLs.
+- Verified `SATemplate.cs` correctly handles `CorridorState` and geometry collections (`Points`, `Links`, `Shapes`).
+- Verified `RoadEdgeRetainingWall.cs` correctly maps parameters and wires insertion calls for points, links, and shapes.
+- **Phase 6 Command build success**: `RetainingWall.Commands` compiles with `RW_CREATE_SURFACES` logic.
+- Resolved missing assembly `AecBaseMgd.dll` found in `ACA` subfolder.
+- Verified `CorridorSurface` API usage for link code addition and boundary creation.
 - Civil 3D manual validation was not run.
 
 ## Required Later Checks

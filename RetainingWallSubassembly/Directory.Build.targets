@@ -20,5 +20,13 @@
       <HintPath>$(AccoremgdPath)</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="AeccCommonMgd" Condition="'$(AeccCommonMgdPath)' != ''">
+      <HintPath>$(AeccCommonMgdPath)</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="AecBaseMgd" Condition="'$(AecBaseMgdPath)' != ''">
+      <HintPath>$(AecBaseMgdPath)</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 </Project>

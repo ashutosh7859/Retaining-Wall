@@ -1,7 +1,11 @@
+using Autodesk.AutoCAD.Runtime;
+
+[assembly: CommandClass(typeof(RetainingWall.Commands.CreateSurfacesCommand))]
+
 namespace RetainingWall.Commands;
 
 /// <summary>
-/// Phase 1 marker for future retaining wall commands.
+/// Entry point and registration for Retaining Wall commands.
 /// </summary>
 public static class CommandsAssembly
 {
