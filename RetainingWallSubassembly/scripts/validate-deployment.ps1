@@ -27,7 +27,7 @@ $requiredFiles = @(
     "Contents/Win64/RetainingWall.Commands.dll",
     "Contents/Win64/RetainingWall.Civil3D.dll",
     "Contents/Win64/RetainingWall.Core.dll",
-    "ToolPalette/RoadEdgeRetainingWall.xml"
+    "ToolPalette/RoadEdgeRetainingWall.xtp"
 )
 
 $allFilesPresent = $true

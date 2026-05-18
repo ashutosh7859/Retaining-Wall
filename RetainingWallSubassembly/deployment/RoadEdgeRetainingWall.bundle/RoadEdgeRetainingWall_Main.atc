@@ -1,38 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Catalog option="0">
-  <ItemID idValue="{6C3F6A92-3F95-46D2-92DE-C13E8B6D6E31}"/>
-  <Properties>
-    <ItemName>Road Edge Retaining Wall</ItemName>
-    <Images option="0">
-      <Image cx="64" cy="64" src=".\Images\RoadEdgeRetainingWall.png"/>
-    </Images>
-    <Description>Civil 3D retaining wall subassembly with corridor surfaces helper.</Description>
-    <AccessRight>1</AccessRight>
-    <Time createdUniversalDateTime="2026-05-16T18:30:43" modifiedUniversalDateTime="2026-05-16T18:30:43"/>
-  </Properties>
-  <Source>
-    <Publisher>
-      <PublisherName>RetainingWallSubassembly</PublisherName>
-    </Publisher>
-  </Source>
-  <Tools/>
-  <Palettes/>
-  <Packages/>
-  <Categories>
-    <Category option="0">
-      <ItemID idValue="{8F7D2C1E-3A4B-4C5D-9E6F-7A8B9C0D1E2F}"/>
-      <Url href=".\RoadEdgeRetainingWall_Tools.atc"/>
-      <Properties>
-        <ItemName>Subassemblies</ItemName>
-        <Images option="0">
-          <Image cx="64" cy="64" src=".\Images\RoadEdgeRetainingWall.png"/>
-        </Images>
-        <Description>Road edge retaining wall subassembly tools.</Description>
-        <AccessRight>1</AccessRight>
-      </Properties>
-      <Source/>
-    </Category>
-  </Categories>
-  <StockTools/>
-  <Catalogs/>
-</Catalog>
+<Catalog FileRevision="25.1.0" Revision="25.1.1" option="0"><ItemID idValue="{6C3F6A92-3F95-46D2-92DE-C13E8B6D6E31}"/><Properties><ItemName>Road Edge Retaining Wall</ItemName><Images option="0"><Image cx="64" cy="64" IsDark="false" src=".\Images\RoadEdgeRetainingWall.png"/></Images><Description>Civil 3D retaining wall subassembly with corridor surfaces helper.</Description><AccessRight>1</AccessRight><Time createdUniversalDateTime="2026-05-18T04:49:09" modifiedUniversalDateTime="2026-05-18T04:49:09"/></Properties><Source><Publisher><PublisherName>RetainingWallSubassembly</PublisherName></Publisher></Source><Tools><Tool Revision="25.1.0" option="0"><ItemID idValue="{A1B2C3D4-E5F6-4A5B-8C7D-9E0F1A2B3C4D}"/><Properties><ItemName>Road Edge Retaining Wall</ItemName><Images option="0"><Image cx="64" cy="64" IsDark="false" src=".\Images\RoadEdgeRetainingWall.png"/></Images><Description>Civil 3D retaining wall subassembly starting at road edge</Description><Time createdUniversalDateTime="2026-05-18T04:49:09" modifiedUniversalDateTime="2026-05-18T04:49:09"/></Properties><ToolType>1</ToolType><StockToolRef/><Data>
+				<AeccDbSubassembly>
+					<GeometryGenerateMode>UseDotNet</GeometryGenerateMode>
+					<DotNetClass Assembly=".\Contents\Win64\RetainingWall.Civil3D.dll">RetainingWall.Civil3D.RoadEdgeRetainingWall</DotNetClass>
+					<Params>
+						<Side DataType="String" DisplayName="Side" Description="Wall side: Left or Right">Right</Side>
+						<WallCase DataType="Long" DisplayName="Wall Case" Description="Wall case type (2-12)">2</WallCase>
+						<UseDimensionOverrides DataType="Bool" DisplayName="Use Overrides" Description="Enable dimension overrides">0</UseDimensionOverrides>
+						<OverrideA DataType="Double" TypeInfo="16" DisplayName="Override A" Description="Dimension override A (meters)">0.0</OverrideA>
+						<OverrideB DataType="Double" TypeInfo="16" DisplayName="Override B" Description="Dimension override B (meters)">0.0</OverrideB>
+						<OverrideC DataType="Double" TypeInfo="16" DisplayName="Override C" Description="Dimension override C (meters)">0.0</OverrideC>
+						<OverrideD DataType="Double" TypeInfo="16" DisplayName="Override D" Description="Dimension override D (meters)">0.0</OverrideD>
+						<OverrideE DataType="Double" TypeInfo="16" DisplayName="Override E" Description="Dimension override E (meters)">0.0</OverrideE>
+						<OverrideF DataType="Double" TypeInfo="16" DisplayName="Override F" Description="Dimension override F (meters)">0.0</OverrideF>
+						<OverrideG DataType="Double" TypeInfo="16" DisplayName="Override G" Description="Dimension override G (meters)">0.0</OverrideG>
+						<OverrideH1 DataType="Double" TypeInfo="16" DisplayName="Override H1" Description="Dimension override H1 (meters)">0.0</OverrideH1>
+						<OverrideH2 DataType="Double" TypeInfo="16" DisplayName="Override H2" Description="Dimension override H2 (meters)">0.0</OverrideH2>
+						<PccThickness DataType="Double" TypeInfo="16" DisplayName="PCC Thickness" Description="Portland cement concrete thickness">0.150</PccThickness>
+						<PccProjection DataType="Double" TypeInfo="16" DisplayName="PCC Projection" Description="PCC projection distance">0.150</PccProjection>
+						<FilterThickness DataType="Double" TypeInfo="16" DisplayName="Filter Thickness" Description="Filter material thickness">0.600</FilterThickness>
+						<WallTopOffset DataType="Double" TypeInfo="16" DisplayName="Wall Top Offset" Description="Offset at wall top">0.450</WallTopOffset>
+					</Params>
+				</AeccDbSubassembly>
+			</Data>
+		</Tool></Tools><Palettes/><Packages/><Categories/><StockTools/><Catalogs/></Catalog>

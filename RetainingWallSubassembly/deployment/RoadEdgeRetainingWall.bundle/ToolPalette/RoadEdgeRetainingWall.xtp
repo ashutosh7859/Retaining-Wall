@@ -1,0 +1,19 @@
+<Palette FileRevision="25.1.0" Revision="25.1.1">
+  <ItemID idValue="{B2C3D4E5-F6A7-4B8C-9D0E-1F2A3B4C5D6E}"/>
+  <Properties>
+    <ItemName>Retaining Wall Subassembly</ItemName>
+    <Description>Tools for retaining walls</Description>
+  </Properties>
+  <Tools>
+    <Tool option="0">
+      <ItemID idValue="{A1B2C3D4-E5F6-4A5B-8C7D-9E0F1A2B3C4D}"/>
+      <Properties>
+        <ItemName>Road Edge Retaining Wall</ItemName>
+        <Description>Civil 3D retaining wall subassembly</Description>
+        <Images option="0">
+          <Image cx="64" cy="64" src="..\Images\RoadEdgeRetainingWall.png"/>
+        </Images>
+      </Properties>
+    </Tool>
+  </Tools>
+</Palette>
