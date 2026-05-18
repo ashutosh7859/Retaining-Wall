@@ -16,17 +16,28 @@ namespace RetainingWall.Civil3D
             var paramsString = corridorState.ParamsString;
 
             paramsString.Add("Side", "Left");
+            
+            // Mode Selectors
+            paramsBool.Add("UseTable", true);
+            paramsBool.Add("SelectByHeight", false);
+            
+            // Table selection parameter
             paramsLong.Add("WallCase", 2);
-            paramsBool.Add("UseDimensionOverrides", false);
-            paramsDouble.Add("OverrideA", 0.0);
-            paramsDouble.Add("OverrideB", 0.0);
-            paramsDouble.Add("OverrideC", 0.0);
-            paramsDouble.Add("OverrideD", 0.0);
-            paramsDouble.Add("OverrideE", 0.0);
-            paramsDouble.Add("OverrideF", 0.0);
-            paramsDouble.Add("OverrideG", 0.0);
-            paramsDouble.Add("OverrideH1", 0.0);
-            paramsDouble.Add("OverrideH2", 0.0);
+
+            // Dimensions / Overrides
+            // When UseTable = True, these act as overrides (if > 0).
+            // When UseTable = False, these act as the direct manual dimensions.
+            paramsDouble.Add("A", 0.0);
+            paramsDouble.Add("B", 0.0);
+            paramsDouble.Add("C", 0.0);
+            paramsDouble.Add("D", 0.0);
+            paramsDouble.Add("E", 0.0);
+            paramsDouble.Add("F", 0.0);
+            paramsDouble.Add("G", 0.0);
+            paramsDouble.Add("H1", 0.0);
+            paramsDouble.Add("H2", 0.0);
+
+            // Construction parameters
             paramsDouble.Add("PccThickness", 0.150);
             paramsDouble.Add("PccProjection", 0.150);
             paramsDouble.Add("FilterThickness", 0.600);
@@ -40,23 +51,66 @@ namespace RetainingWall.Civil3D
             var sideStr = GetStringParam(corridorState, "Side", "Left");
             var side = string.Equals(sideStr, "Right", StringComparison.OrdinalIgnoreCase) ? RetainingWall.Core.Side.Right : RetainingWall.Core.Side.Left;
             
-            var wallCase = GetIntParam(corridorState, "WallCase", 2);
-            var dims = WallCaseTable.GetDimensions(wallCase);
+            var useTable = GetBoolParam(corridorState, "UseTable", true);
+            var selectByHeight = GetBoolParam(corridorState, "SelectByHeight", false);
             
-            var overrides = new WallDimensionOverrides
+            // Read direct dimension/override inputs
+            double inputA = GetDoubleParam(corridorState, "A", 0.0);
+            double inputB = GetDoubleParam(corridorState, "B", 0.0);
+            double inputC = GetDoubleParam(corridorState, "C", 0.0);
+            double inputD = GetDoubleParam(corridorState, "D", 0.0);
+            double inputE = GetDoubleParam(corridorState, "E", 0.0);
+            double inputF = GetDoubleParam(corridorState, "F", 0.0);
+            double inputG = GetDoubleParam(corridorState, "G", 0.0);
+            double inputH1 = GetDoubleParam(corridorState, "H1", 0.0);
+            double inputH2 = GetDoubleParam(corridorState, "H2", 0.0);
+
+            WallDimensions dims;
+
+            if (useTable)
             {
-                UseDimensionOverrides = GetBoolParam(corridorState, "UseDimensionOverrides", false),
-                OverrideA = GetDoubleParam(corridorState, "OverrideA", 0.0),
-                OverrideB = GetDoubleParam(corridorState, "OverrideB", 0.0),
-                OverrideC = GetDoubleParam(corridorState, "OverrideC", 0.0),
-                OverrideD = GetDoubleParam(corridorState, "OverrideD", 0.0),
-                OverrideE = GetDoubleParam(corridorState, "OverrideE", 0.0),
-                OverrideF = GetDoubleParam(corridorState, "OverrideF", 0.0),
-                OverrideG = GetDoubleParam(corridorState, "OverrideG", 0.0),
-                OverrideH1 = GetDoubleParam(corridorState, "OverrideH1", 0.0),
-                OverrideH2 = GetDoubleParam(corridorState, "OverrideH2", 0.0)
-            };
-            var finalDims = overrides.Apply(dims);
+                WallDimensions baseDims;
+                if (selectByHeight)
+                {
+                    // If selecting by height, we use inputH1 if specified (>0), else default to Case 2 height
+                    double lookupHeight = inputH1 > 0 ? inputH1 : 2.000;
+                    baseDims = WallCaseTable.GetDimensionsByHeight(lookupHeight);
+                }
+                else
+                {
+                    var wallCase = GetIntParam(corridorState, "WallCase", 2);
+                    baseDims = WallCaseTable.GetDimensions(wallCase);
+                }
+
+                // Apply overrides (any value > 0 overrides the table value)
+                dims = new WallDimensions(
+                    inputA > 0 ? inputA : baseDims.A,
+                    inputB > 0 ? inputB : baseDims.B,
+                    inputC > 0 ? inputC : baseDims.C,
+                    inputD > 0 ? inputD : baseDims.D,
+                    inputE > 0 ? inputE : baseDims.E,
+                    inputF > 0 ? inputF : baseDims.F,
+                    inputG > 0 ? inputG : baseDims.G,
+                    inputH1 > 0 ? inputH1 : baseDims.H1,
+                    inputH2 > 0 ? inputH2 : baseDims.H2
+                );
+            }
+            else
+            {
+                // Manual mode: use inputs directly. Fallback to Case 2 defaults if any inputs are 0.
+                var defaultCase2 = WallCaseTable.GetDimensions(2);
+                dims = new WallDimensions(
+                    inputA > 0 ? inputA : defaultCase2.A,
+                    inputB > 0 ? inputB : defaultCase2.B,
+                    inputC > 0 ? inputC : defaultCase2.C,
+                    inputD > 0 ? inputD : defaultCase2.D,
+                    inputE > 0 ? inputE : defaultCase2.E,
+                    inputF > 0 ? inputF : defaultCase2.F,
+                    inputG > 0 ? inputG : defaultCase2.G,
+                    inputH1 > 0 ? inputH1 : defaultCase2.H1,
+                    inputH2 >= 0 ? inputH2 : defaultCase2.H2 // Allow 0 for H2 (no shear key)
+                );
+            }
 
             var generator = new WallGeometryGenerator
             {
@@ -66,7 +120,7 @@ namespace RetainingWall.Civil3D
                 WallTopOffset = GetDoubleParam(corridorState, "WallTopOffset", 0.450)
             };
 
-            var result = generator.Generate(finalDims, side);
+            var result = generator.Generate(dims, side);
 
             var corePointsToC3DPoints = new Dictionary<GeometryPoint, Autodesk.Civil.DatabaseServices.IPoint>();
             foreach (var cp in result.Points)

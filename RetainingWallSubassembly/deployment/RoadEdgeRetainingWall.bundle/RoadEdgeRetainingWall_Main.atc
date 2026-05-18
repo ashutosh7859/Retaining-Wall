@@ -4,21 +4,22 @@
           <DotNetClass Assembly="C:\ProgramData\Autodesk\ApplicationPlugins\RoadEdgeRetainingWall.bundle\Contents\Win64\RetainingWall.Civil3D.dll">Subassembly.RoadEdgeRetainingWall</DotNetClass>
 					<Params>
 						<Side DataType="String" DisplayName="Side" Description="Wall side: Left or Right">Left</Side>
-						<WallCase DataType="Long" DisplayName="Wall Case" Description="Wall case type (2-12)">2</WallCase>
-						<UseDimensionOverrides DataType="Bool" DisplayName="Use Overrides" Description="Enable dimension overrides">0</UseDimensionOverrides>
-						<OverrideA DataType="Double" TypeInfo="16" DisplayName="Override A" Description="Dimension override A (meters)">0.0</OverrideA>
-						<OverrideB DataType="Double" TypeInfo="16" DisplayName="Override B" Description="Dimension override B (meters)">0.0</OverrideB>
-						<OverrideC DataType="Double" TypeInfo="16" DisplayName="Override C" Description="Dimension override C (meters)">0.0</OverrideC>
-						<OverrideD DataType="Double" TypeInfo="16" DisplayName="Override D" Description="Dimension override D (meters)">0.0</OverrideD>
-						<OverrideE DataType="Double" TypeInfo="16" DisplayName="Override E" Description="Dimension override E (meters)">0.0</OverrideE>
-						<OverrideF DataType="Double" TypeInfo="16" DisplayName="Override F" Description="Dimension override F (meters)">0.0</OverrideF>
-						<OverrideG DataType="Double" TypeInfo="16" DisplayName="Override G" Description="Dimension override G (meters)">0.0</OverrideG>
-						<OverrideH1 DataType="Double" TypeInfo="16" DisplayName="Override H1" Description="Dimension override H1 (meters)">0.0</OverrideH1>
-						<OverrideH2 DataType="Double" TypeInfo="16" DisplayName="Override H2" Description="Dimension override H2 (meters)">0.0</OverrideH2>
-						<PccThickness DataType="Double" TypeInfo="16" DisplayName="PCC Thickness" Description="Portland cement concrete thickness">0.150</PccThickness>
-						<PccProjection DataType="Double" TypeInfo="16" DisplayName="PCC Projection" Description="PCC projection distance">0.150</PccProjection>
-						<FilterThickness DataType="Double" TypeInfo="16" DisplayName="Filter Thickness" Description="Filter material thickness">0.600</FilterThickness>
-						<WallTopOffset DataType="Double" TypeInfo="16" DisplayName="Wall Top Offset" Description="Offset at wall top">0.450</WallTopOffset>
+						<UseTable DataType="Bool" DisplayName="Use Table" Description="Retrieve dimensions from the Case Table">1</UseTable>
+						<SelectByHeight DataType="Bool" DisplayName="Select Table By Height" Description="Lookup Case Table by specified Height H1">0</SelectByHeight>
+						<WallCase DataType="Long" DisplayName="Wall Case" Description="Wall case type (2-12) when SelectByHeight is false">2</WallCase>
+						<A DataType="Double" TypeInfo="16" DisplayName="Top Stem Width (A)" Description="Dimension A (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</A>
+						<B DataType="Double" TypeInfo="16" DisplayName="Bottom Stem Width (B)" Description="Dimension B (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</B>
+						<C DataType="Double" TypeInfo="16" DisplayName="Toe Width (C)" Description="Dimension C (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</C>
+						<D DataType="Double" TypeInfo="16" DisplayName="Heel Width (D)" Description="Dimension D (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</D>
+						<E DataType="Double" TypeInfo="16" DisplayName="Toe Thickness (E)" Description="Dimension E (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</E>
+						<F DataType="Double" TypeInfo="16" DisplayName="Junction Thickness (F)" Description="Dimension F (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</F>
+						<G DataType="Double" TypeInfo="16" DisplayName="Heel Thickness (G)" Description="Dimension G (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</G>
+						<H1 DataType="Double" TypeInfo="16" DisplayName="Total Height (H1)" Description="Dimension H1 (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</H1>
+						<H2 DataType="Double" TypeInfo="16" DisplayName="Shear Key Depth (H2)" Description="Dimension H2 (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</H2>
+						<PccThickness DataType="Double" TypeInfo="16" DisplayName="PCC Thickness" Description="Portland cement concrete thickness (meters)">0.150</PccThickness>
+						<PccProjection DataType="Double" TypeInfo="16" DisplayName="PCC Projection" Description="PCC projection distance (meters)">0.150</PccProjection>
+						<FilterThickness DataType="Double" TypeInfo="16" DisplayName="Filter Thickness" Description="Filter material thickness (meters)">0.600</FilterThickness>
+						<WallTopOffset DataType="Double" TypeInfo="16" DisplayName="Wall Top Offset" Description="Offset at wall top (meters)">0.450</WallTopOffset>
 					</Params>
 				</AeccDbSubassembly>
 				<Units>m</Units>

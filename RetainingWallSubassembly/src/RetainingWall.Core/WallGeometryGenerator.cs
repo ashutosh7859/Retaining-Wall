@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RetainingWall.Core
 {
     /// <summary>
-    /// Generates retaining wall geometry based on parameters.
+    /// Generates retaining wall geometry based on customizable parameters.
     /// </summary>
     public class WallGeometryGenerator
     {
@@ -18,19 +17,6 @@ namespace RetainingWall.Core
             var result = new GeometryResult();
             int sign = side == Side.Left ? -1 : 1;
 
-            // Define points mathematically assuming Left side (negative X).
-            // We'll apply the sign multiplier at the end.
-
-            // The exact mapping to typical retaining walls:
-            // Top Width = A
-            // Bottom Stem Width = B
-            // Toe Width = C
-            // Heel Width = D
-            // Toe Thickness = E
-            // Heel Thickness = G
-            // Total Height = H1
-            // (Assuming H2 is some other depth, we'll use it if needed, but H1, A, B, C, D, E, G are sufficient for standard shape).
-
             double xAttach = 0;
             double yAttach = 0;
 
@@ -40,78 +26,135 @@ namespace RetainingWall.Core
             double xTopFront = xTopBack + dims.A;
             double yTopFront = 0;
 
-            double yStemBottomFront = -dims.H1 + dims.E;
+            double yStemBottom = -dims.H1 + dims.F;
+            
+            double xStemBottomBack = xTopBack;
             double xStemBottomFront = xTopBack + dims.B;
 
-            double yStemBottomBack = -dims.H1 + dims.G;
-            double xStemBottomBack = xTopBack;
-
-            // Toe
             double xToeTop = xStemBottomFront + dims.C;
-            double yToeTop = yStemBottomFront;
+            double yToeTop = -dims.H1 + dims.E;
             double xToeBot = xToeTop;
             double yToeBot = -dims.H1;
 
-            // Heel
             double xHeelTop = xStemBottomBack - dims.D;
-            double yHeelTop = yStemBottomBack;
+            double yHeelTop = -dims.H1 + dims.G;
             double xHeelBot = xHeelTop;
             double yHeelBot = -dims.H1;
 
-            double xStemBotFrontFooting = xStemBottomFront;
-            double yStemBotFrontFooting = -dims.H1;
+            // Shear Key logic using H2
+            bool hasKey = dims.H2 > 0;
+            double yKeyBot = -dims.H1 - dims.H2;
+            double xKeyBack = xStemBottomBack;
+            double xKeyFront = xKeyBack + dims.A; // Key width matches stem top width A for proportional structural sizing
+            
+            if (xKeyFront > xStemBottomFront)
+                xKeyFront = xStemBottomFront;
 
-            double xStemBotBackFooting = xStemBottomBack;
-            double yStemBotBackFooting = -dims.H1;
-
-            // Create Points (apply sign)
+            // --- Points ---
             var pAttach = AddPoint(result, xAttach * sign, yAttach, "RW_Attach");
             var pTopBack = AddPoint(result, xTopBack * sign, yTopBack, "RW_TopBack");
             var pTopFront = AddPoint(result, xTopFront * sign, yTopFront, "RW_TopFront");
             
-            var pStemBotFront = AddPoint(result, xStemBottomFront * sign, yStemBottomFront);
+            var pStemBotFront = AddPoint(result, xStemBottomFront * sign, yStemBottom);
             var pToeTop = AddPoint(result, xToeTop * sign, yToeTop);
             var pToeBot = AddPoint(result, xToeBot * sign, yToeBot, "RW_FootingToe");
+            
+            GeometryPoint pKeyFrontTop = null, pKeyFrontBot = null, pKeyBackBot = null, pKeyBackTop = null;
+            if (hasKey)
+            {
+                pKeyFrontTop = AddPoint(result, xKeyFront * sign, yToeBot);
+                pKeyFrontBot = AddPoint(result, xKeyFront * sign, yKeyBot, "RW_Key");
+                pKeyBackBot = AddPoint(result, xKeyBack * sign, yKeyBot, "RW_Key");
+                pKeyBackTop = AddPoint(result, xKeyBack * sign, yHeelBot);
+            }
+
             var pHeelBot = AddPoint(result, xHeelBot * sign, yHeelBot, "RW_FootingHeel");
             var pHeelTop = AddPoint(result, xHeelTop * sign, yHeelTop);
-            var pStemBotBack = AddPoint(result, xStemBottomBack * sign, yStemBottomBack);
+            var pStemBotBack = AddPoint(result, xStemBottomBack * sign, yStemBottom);
 
-            // Concrete Links
-            var lTop = AddLink(result, pTopBack, pTopFront, "RW_Top", "RW_Concrete");
-            var lFront = AddLink(result, pTopFront, pStemBotFront, "RW_Wall", "RW_Concrete");
-            var lToeTop = AddLink(result, pStemBotFront, pToeTop, "RW_Footing", "RW_Concrete");
-            var lToeFace = AddLink(result, pToeTop, pToeBot, "RW_Footing", "RW_Concrete");
-            var lBot = AddLink(result, pToeBot, pHeelBot, "RW_Footing", "RW_Datum", "RW_Concrete");
-            var lHeelFace = AddLink(result, pHeelBot, pHeelTop, "RW_Footing", "RW_Concrete");
-            var lHeelTop = AddLink(result, pHeelTop, pStemBotBack, "RW_Footing", "RW_Concrete");
-            var lBack = AddLink(result, pStemBotBack, pTopBack, "RW_Wall", "RW_Concrete");
+            // --- Concrete Links ---
+            var linksConcrete = new List<GeometryLink>();
+            linksConcrete.Add(AddLink(result, pTopBack, pTopFront, "RW_Top", "RW_Concrete"));
+            linksConcrete.Add(AddLink(result, pTopFront, pStemBotFront, "RW_Wall", "RW_Concrete"));
+            linksConcrete.Add(AddLink(result, pStemBotFront, pToeTop, "RW_Footing", "RW_Concrete"));
+            linksConcrete.Add(AddLink(result, pToeTop, pToeBot, "RW_Footing", "RW_Concrete"));
+            
+            if (hasKey)
+            {
+                linksConcrete.Add(AddLink(result, pToeBot, pKeyFrontTop, "RW_Footing", "RW_Datum", "RW_Concrete"));
+                linksConcrete.Add(AddLink(result, pKeyFrontTop, pKeyFrontBot, "RW_Footing", "RW_Datum", "RW_Concrete"));
+                linksConcrete.Add(AddLink(result, pKeyFrontBot, pKeyBackBot, "RW_Footing", "RW_Datum", "RW_Concrete"));
+                linksConcrete.Add(AddLink(result, pKeyBackBot, pKeyBackTop, "RW_Footing", "RW_Datum", "RW_Concrete"));
+                linksConcrete.Add(AddLink(result, pKeyBackTop, pHeelBot, "RW_Footing", "RW_Datum", "RW_Concrete"));
+            }
+            else
+            {
+                linksConcrete.Add(AddLink(result, pToeBot, pHeelBot, "RW_Footing", "RW_Datum", "RW_Concrete"));
+            }
 
-            result.Shapes.Add(new GeometryShape(new List<GeometryLink> { lTop, lFront, lToeTop, lToeFace, lBot, lHeelFace, lHeelTop, lBack }, "RW_Concrete"));
+            linksConcrete.Add(AddLink(result, pHeelBot, pHeelTop, "RW_Footing", "RW_Concrete"));
+            linksConcrete.Add(AddLink(result, pHeelTop, pStemBotBack, "RW_Footing", "RW_Concrete"));
+            linksConcrete.Add(AddLink(result, pStemBotBack, pTopBack, "RW_Wall", "RW_Concrete"));
 
-            // PCC
+            result.Shapes.Add(new GeometryShape(linksConcrete, "RW_Concrete"));
+
+            // --- PCC Links ---
+            var linksPcc = new List<GeometryLink>();
             double xPccToe = xToeBot + PccProjection;
-            double yPccBot = yToeBot - PccThickness;
             double xPccHeel = xHeelBot - PccProjection;
             
             var pPccToeTop = AddPoint(result, xToeBot * sign, yToeBot);
             var pPccHeelTop = AddPoint(result, xHeelBot * sign, yHeelBot);
-
-            var pPccToeBot = AddPoint(result, xPccToe * sign, yPccBot, "RW_PccLeft"); // Assuming Left means outer
-            var pPccHeelBot = AddPoint(result, xPccHeel * sign, yPccBot, "RW_PccRight"); // Assuming Right means inner
-
             var pPccToeProj = AddPoint(result, xPccToe * sign, yToeBot);
             var pPccHeelProj = AddPoint(result, xPccHeel * sign, yHeelBot);
+            
+            var pPccToeBot = AddPoint(result, xPccToe * sign, yToeBot - PccThickness, "RW_PccLeft"); 
+            var pPccHeelBot = AddPoint(result, xPccHeel * sign, yHeelBot - PccThickness, "RW_PccRight"); 
 
-            var lPccTop = AddLink(result, pPccHeelTop, pPccToeTop, "RW_PCC"); // Same as concrete bottom but reverse or shared
-            var lPccToeFace = AddLink(result, pPccToeTop, pPccToeProj, "RW_PCC");
-            var lPccToeSide = AddLink(result, pPccToeProj, pPccToeBot, "RW_PCC", "RW_Datum");
-            var lPccBot = AddLink(result, pPccToeBot, pPccHeelBot, "RW_PCC", "RW_Datum");
-            var lPccHeelSide = AddLink(result, pPccHeelBot, pPccHeelProj, "RW_PCC", "RW_Datum");
-            var lPccHeelFace = AddLink(result, pPccHeelProj, pPccHeelTop, "RW_PCC");
+            // Left edge
+            linksPcc.Add(AddLink(result, pPccToeTop, pPccToeProj, "RW_PCC"));
+            linksPcc.Add(AddLink(result, pPccToeProj, pPccToeBot, "RW_PCC", "RW_Datum"));
 
-            result.Shapes.Add(new GeometryShape(new List<GeometryLink> { lPccTop, lPccToeFace, lPccToeSide, lPccBot, lPccHeelSide, lPccHeelFace }, "RW_PCC"));
+            // Bottom edge (incorporating key if active)
+            if (hasKey)
+            {
+                var pPccKeyFrontTop = AddPoint(result, xKeyFront * sign, yToeBot - PccThickness);
+                var pPccKeyFrontBot = AddPoint(result, xKeyFront * sign, yKeyBot - PccThickness);
+                var pPccKeyBackBot = AddPoint(result, xKeyBack * sign, yKeyBot - PccThickness);
+                var pPccKeyBackTop = AddPoint(result, xKeyBack * sign, yHeelBot - PccThickness);
 
-            // Filter (Behind Wall)
+                linksPcc.Add(AddLink(result, pPccToeBot, pPccKeyFrontTop, "RW_PCC", "RW_Datum"));
+                linksPcc.Add(AddLink(result, pPccKeyFrontTop, pPccKeyFrontBot, "RW_PCC", "RW_Datum"));
+                linksPcc.Add(AddLink(result, pPccKeyFrontBot, pPccKeyBackBot, "RW_PCC", "RW_Datum"));
+                linksPcc.Add(AddLink(result, pPccKeyBackBot, pPccKeyBackTop, "RW_PCC", "RW_Datum"));
+                linksPcc.Add(AddLink(result, pPccKeyBackTop, pPccHeelBot, "RW_PCC", "RW_Datum"));
+            }
+            else
+            {
+                linksPcc.Add(AddLink(result, pPccToeBot, pPccHeelBot, "RW_PCC", "RW_Datum"));
+            }
+
+            // Right edge
+            linksPcc.Add(AddLink(result, pPccHeelBot, pPccHeelProj, "RW_PCC", "RW_Datum"));
+            linksPcc.Add(AddLink(result, pPccHeelProj, pPccHeelTop, "RW_PCC"));
+
+            // Top boundary (sharing or mirroring footing bottom)
+            if (hasKey)
+            {
+                linksPcc.Add(AddLink(result, pPccHeelTop, pKeyBackTop, "RW_PCC"));
+                linksPcc.Add(AddLink(result, pKeyBackTop, pKeyBackBot, "RW_PCC"));
+                linksPcc.Add(AddLink(result, pKeyBackBot, pKeyFrontBot, "RW_PCC"));
+                linksPcc.Add(AddLink(result, pKeyFrontBot, pKeyFrontTop, "RW_PCC"));
+                linksPcc.Add(AddLink(result, pKeyFrontTop, pPccToeTop, "RW_PCC"));
+            }
+            else
+            {
+                linksPcc.Add(AddLink(result, pPccHeelTop, pPccToeTop, "RW_PCC"));
+            }
+
+            result.Shapes.Add(new GeometryShape(linksPcc, "RW_PCC"));
+
+            // --- Filter ---
             double xFilterTop = xTopBack - FilterThickness;
             double xFilterHeel = xHeelTop - FilterThickness;
             
