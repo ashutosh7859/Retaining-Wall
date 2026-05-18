@@ -1,20 +1,9 @@
 Windows Registry Editor Version 5.00
 
-; --- Developer Path (W: Drive) ---
-; Use this if you want to test directly from your development folder.
-; Note: Paths in .reg files require double backslashes \\
-
 [HKEY_CURRENT_USER\Software\Autodesk\Autodesk Content Browser\88\RegisteredCatalogs\RoadEdgeRetainingWall]
 "ItemID"="{6C3F6A92-3F95-46D2-92DE-C13E8B6D6E31}"
-"Url"="w:\\ASHU_tpi76_W\\10_PROJECTS\\Retaining Wall\\RetainingWallSubassembly\\deployment\\RoadEdgeRetainingWall.bundle\\RoadEdgeRetainingWall_Main.atc"
-"DisplayName"="Road Edge Retaining Wall (Dev)"
+"Url"="C:\\ProgramData\\Autodesk\\ApplicationPlugins\\RoadEdgeRetainingWall.bundle\\RoadEdgeRetainingWall_Main.atc"
+"DisplayName"="Road Edge Retaining Wall"
 "Description"="Civil 3D retaining wall subassembly with corridor surfaces helper."
 "Publisher"="RetainingWallSubassembly"
 "Type"=dword:00000001
-
-; --- Standard Path (ProgramData) ---
-; Use this for final deployment. 
-; Uncomment the lines below and comment out the ones above to switch.
-; [HKEY_CURRENT_USER\Software\Autodesk\Autodesk Content Browser\88\RegisteredCatalogs\RoadEdgeRetainingWall]
-; "Url"="C:\\ProgramData\\Autodesk\\ApplicationPlugins\\RoadEdgeRetainingWall.bundle\\RoadEdgeRetainingWall_Main.atc"
-; "DisplayName"="Road Edge Retaining Wall"

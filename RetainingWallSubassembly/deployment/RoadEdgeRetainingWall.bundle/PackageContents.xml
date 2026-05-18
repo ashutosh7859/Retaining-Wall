@@ -21,9 +21,6 @@
       AppType=".Net"
       LoadOnAutoCADStartup="True">
       <RuntimeRequirements OS="Win64" SeriesMin="R25.1" SeriesMax="R25.1" />
-      <Commands GroupName="RW_SUBASSY">
-        <Command Global="RW_ROAD_EDGE_RETAINING_WALL" Local="RW_ROAD_EDGE_RETAINING_WALL" />
-      </Commands>
     </ComponentEntry>
     
     <ComponentEntry

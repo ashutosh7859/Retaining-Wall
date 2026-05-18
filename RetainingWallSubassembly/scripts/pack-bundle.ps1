@@ -1,33 +1,49 @@
 [CmdletBinding()]
 param(
     [ValidateSet('Debug', 'Release')]
-    [string]$Configuration = 'Release'
+    [string]$Configuration = 'Release',
+
+    [string]$Platform = 'x64'
 )
 
 $ErrorActionPreference = 'Stop'
 
-$Root = "$PSScriptRoot\.."
-$BundleRoot = "$Root\deployment\RoadEdgeRetainingWall.bundle"
-$Win64 = "$BundleRoot\Contents\Win64"
+$Root = Resolve-Path (Join-Path $PSScriptRoot '..')
+$BundleRoot = Join-Path $Root 'deployment\RoadEdgeRetainingWall.bundle'
+$Win64 = Join-Path $BundleRoot 'Contents\Win64'
 
 New-Item -ItemType Directory -Force -Path $Win64 | Out-Null
 
-$ProjectNames = @('RetainingWall.Civil3D', 'RetainingWall.Commands')
+Get-ChildItem -LiteralPath $Win64 -File | Remove-Item -Force
 
-foreach ($ProjectName in $ProjectNames) {
-    $Candidates = @(
-        "$Root\src\$ProjectName\bin\x64\$Configuration\net8.0-windows\$ProjectName.dll",
-        "$Root\src\$ProjectName\bin\$Configuration\net8.0-windows\$ProjectName.dll"
+$projects = @(
+    @{ Name = 'RetainingWall.Core'; Framework = 'net8.0' },
+    @{ Name = 'RetainingWall.Civil3D'; Framework = 'net8.0-windows' },
+    @{ Name = 'RetainingWall.Commands'; Framework = 'net8.0-windows' }
+)
+
+foreach ($project in $projects) {
+    $projectName = $project.Name
+    $framework = $project.Framework
+    $candidates = @(
+        (Join-Path $Root "src\$projectName\bin\$Platform\$Configuration\$framework"),
+        (Join-Path $Root "src\$projectName\bin\$Configuration\$framework")
     )
 
-    $Source = $Candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
-
-    if ($Source) {
-        Copy-Item -LiteralPath $Source -Destination $Win64 -Force
+    $sourceDir = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+    if (-not $sourceDir) {
+        throw "$projectName output was not found. Run scripts\build.ps1 first."
     }
-    else {
-        Write-Warning "$ProjectName.dll was not found. Run scripts\build.ps1 first."
+
+    foreach ($extension in @('dll', 'pdb', 'xml')) {
+        Get-ChildItem -LiteralPath $sourceDir -Filter "$projectName.$extension" -File -ErrorAction SilentlyContinue |
+            Copy-Item -Destination $Win64 -Force
+    }
+
+    $dllPath = Join-Path $Win64 "$projectName.dll"
+    if (-not (Test-Path $dllPath)) {
+        throw "$projectName.dll was not copied into $Win64."
     }
 }
 
-Write-Host "Bundle scaffold prepared at $BundleRoot"
+Write-Host "Bundle prepared at $BundleRoot"
