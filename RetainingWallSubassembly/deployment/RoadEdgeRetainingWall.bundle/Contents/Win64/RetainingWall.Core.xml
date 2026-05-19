@@ -84,31 +84,41 @@
             </summary>
         </member>
         <member name="P:RetainingWall.Core.WallDimensions.A">
-            <summary>Top width of stem (a) in metres.</summary>
+            <summary>Recess thickness at P10 (a) in metres.</summary>
         </member>
         <member name="P:RetainingWall.Core.WallDimensions.B">
-            <summary>Bottom stem width (b) in metres.</summary>
+            <summary>Stem thickness at footing plane (b) in metres.</summary>
         </member>
         <member name="P:RetainingWall.Core.WallDimensions.C">
-            <summary>Toe width (c) in metres.</summary>
+            <summary>Heel projection length (c) in metres.</summary>
         </member>
         <member name="P:RetainingWall.Core.WallDimensions.D">
-            <summary>Heel width (d) in metres.</summary>
+            <summary>Toe projection length (d) in metres.</summary>
         </member>
         <member name="P:RetainingWall.Core.WallDimensions.E">
-            <summary>Toe thickness (e) in metres.</summary>
+            <summary>Vertical height of outer heel face (e) in metres.</summary>
         </member>
         <member name="P:RetainingWall.Core.WallDimensions.F">
-            <summary>Footing thickness at stem junction (f) in metres.</summary>
+            <summary>Maximum footing depth at stem junction (f) in metres.</summary>
         </member>
         <member name="P:RetainingWall.Core.WallDimensions.G">
-            <summary>Heel thickness (g) in metres.</summary>
+            <summary>Vertical height of outer toe face (g) in metres.</summary>
         </member>
         <member name="P:RetainingWall.Core.WallDimensions.H1">
             <summary>Total height (H1) in metres.</summary>
         </member>
         <member name="P:RetainingWall.Core.WallDimensions.H2">
-            <summary>Shear key depth / Footing depth (H2) in metres.</summary>
+            <summary>Foundation depth from GL to footing bottom (H2) in metres.</summary>
+        </member>
+        <member name="T:RetainingWall.Core.OperatingMode">
+            <summary>
+            Dictates how the retaining wall dimensions are determined.
+            </summary>
+        </member>
+        <member name="T:RetainingWall.Core.WallPreset">
+            <summary>
+            Represents standard wall structural case table presets (Type 2 to Type 12).
+            </summary>
         </member>
         <member name="T:RetainingWall.Core.WallGeometryGenerator">
             <summary>

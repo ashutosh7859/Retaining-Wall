@@ -1,176 +1,218 @@
+using System;
 using System.Collections.Generic;
 
 namespace RetainingWall.Core
 {
     /// <summary>
+    /// Dictates how the retaining wall dimensions are determined.
+    /// </summary>
+    public enum OperatingMode
+    {
+        DynamicTable = 0,
+        PresetDropdown = 1,
+        FullCustom = 2
+    }
+
+    /// <summary>
+    /// Represents standard wall structural case table presets (Type 2 to Type 12).
+    /// </summary>
+    public enum WallPreset
+    {
+        Type2 = 2,
+        Type3 = 3,
+        Type4 = 4,
+        Type5 = 5,
+        Type6 = 6,
+        Type7 = 7,
+        Type8 = 8,
+        Type9 = 9,
+        Type10 = 10,
+        Type11 = 11,
+        Type12 = 12
+    }
+
+    /// <summary>
     /// Generates retaining wall geometry based on customizable parameters.
     /// </summary>
     public class WallGeometryGenerator
     {
+        // Core Configuration Control
+        public OperatingMode OperatingMode { get; set; } = OperatingMode.DynamicTable;
+        public WallPreset WallPreset { get; set; } = WallPreset.Type2;
+
+        // Dimensions - Stem Notch & Batter
+        public double w { get; set; } = 0.450;
+        public double x1 { get; set; } = 0.250;
+        public double x2 { get; set; } = 0.250;
+        public double a { get; set; } = 0.450;
+
+        // Dimensions - Custom Footing & Base (Used only in Full Custom)
+        public double Custom_H1 { get; set; } = 3.000;
+        public double Custom_b { get; set; } = 0.450;
+        public double Custom_c { get; set; } = 1.450;
+        public double Custom_d { get; set; } = 0.700;
+        public double Custom_e { get; set; } = 0.250;
+        public double Custom_f { get; set; } = 0.350;
+        public double Custom_g { get; set; } = 0.250;
+        public double Custom_H2 { get; set; } = 0.850;
+
+        // Foundations - PCC Mud Mat
         public double PccThickness { get; set; } = 0.150;
-        public double PccProjection { get; set; } = 0.150;
-        public double FilterThickness { get; set; } = 0.600;
-        public double WallTopOffset { get; set; } = 0.450;
+        public double PccOffset { get; set; } = 0.150;
+
+        // Backfill - Filter Media
+        public double FmThickness { get; set; } = 0.600;
 
         public GeometryResult Generate(WallDimensions dims, Side side)
         {
             var result = new GeometryResult();
-            int sign = side == Side.Left ? -1 : 1;
+            double sign = side == Side.Right ? 1.0 : -1.0;
 
-            double xAttach = 0;
-            double yAttach = 0;
+            // Step 1: Resolve dimensions based on operating mode
+            double H1, H2, b, c, d, e, f, g;
 
-            double xTopBack = WallTopOffset;
-            double yTopBack = 0;
-
-            double xTopFront = xTopBack + dims.A;
-            double yTopFront = 0;
-
-            double yStemBottom = -dims.H1 + dims.F;
-            
-            double xStemBottomBack = xTopBack;
-            double xStemBottomFront = xTopBack + dims.B;
-
-            double xToeTop = xStemBottomFront + dims.C;
-            double yToeTop = -dims.H1 + dims.E;
-            double xToeBot = xToeTop;
-            double yToeBot = -dims.H1;
-
-            double xHeelTop = xStemBottomBack - dims.D;
-            double yHeelTop = -dims.H1 + dims.G;
-            double xHeelBot = xHeelTop;
-            double yHeelBot = -dims.H1;
-
-            // Shear Key logic using H2
-            bool hasKey = dims.H2 > 0;
-            double yKeyBot = -dims.H1 - dims.H2;
-            double xKeyBack = xStemBottomBack;
-            double xKeyFront = xKeyBack + dims.A; // Key width matches stem top width A for proportional structural sizing
-            
-            if (xKeyFront > xStemBottomFront)
-                xKeyFront = xStemBottomFront;
-
-            // --- Points ---
-            var pAttach = AddPoint(result, xAttach * sign, yAttach, "RW_Attach");
-            var pTopBack = AddPoint(result, xTopBack * sign, yTopBack, "RW_TopBack");
-            var pTopFront = AddPoint(result, xTopFront * sign, yTopFront, "RW_TopFront");
-            
-            var pStemBotFront = AddPoint(result, xStemBottomFront * sign, yStemBottom);
-            var pToeTop = AddPoint(result, xToeTop * sign, yToeTop);
-            var pToeBot = AddPoint(result, xToeBot * sign, yToeBot, "RW_FootingToe");
-            
-            GeometryPoint pKeyFrontTop = null, pKeyFrontBot = null, pKeyBackBot = null, pKeyBackTop = null;
-            if (hasKey)
+            if (OperatingMode == OperatingMode.FullCustom)
             {
-                pKeyFrontTop = AddPoint(result, xKeyFront * sign, yToeBot);
-                pKeyFrontBot = AddPoint(result, xKeyFront * sign, yKeyBot, "RW_Key");
-                pKeyBackBot = AddPoint(result, xKeyBack * sign, yKeyBot, "RW_Key");
-                pKeyBackTop = AddPoint(result, xKeyBack * sign, yHeelBot);
-            }
-
-            var pHeelBot = AddPoint(result, xHeelBot * sign, yHeelBot, "RW_FootingHeel");
-            var pHeelTop = AddPoint(result, xHeelTop * sign, yHeelTop);
-            var pStemBotBack = AddPoint(result, xStemBottomBack * sign, yStemBottom);
-
-            // --- Concrete Links ---
-            var linksConcrete = new List<GeometryLink>();
-            linksConcrete.Add(AddLink(result, pTopBack, pTopFront, "RW_Top", "RW_Concrete"));
-            linksConcrete.Add(AddLink(result, pTopFront, pStemBotFront, "RW_Wall", "RW_Concrete"));
-            linksConcrete.Add(AddLink(result, pStemBotFront, pToeTop, "RW_Footing", "RW_Concrete"));
-            linksConcrete.Add(AddLink(result, pToeTop, pToeBot, "RW_Footing", "RW_Concrete"));
-            
-            if (hasKey)
-            {
-                linksConcrete.Add(AddLink(result, pToeBot, pKeyFrontTop, "RW_Footing", "RW_Datum", "RW_Concrete"));
-                linksConcrete.Add(AddLink(result, pKeyFrontTop, pKeyFrontBot, "RW_Footing", "RW_Datum", "RW_Concrete"));
-                linksConcrete.Add(AddLink(result, pKeyFrontBot, pKeyBackBot, "RW_Footing", "RW_Datum", "RW_Concrete"));
-                linksConcrete.Add(AddLink(result, pKeyBackBot, pKeyBackTop, "RW_Footing", "RW_Datum", "RW_Concrete"));
-                linksConcrete.Add(AddLink(result, pKeyBackTop, pHeelBot, "RW_Footing", "RW_Datum", "RW_Concrete"));
+                // In Full Custom mode, use Custom_* dimensions directly.
+                H1 = Custom_H1;
+                H2 = Custom_H2;
+                b = Custom_b;
+                c = Custom_c;
+                d = Custom_d;
+                e = Custom_e;
+                f = Custom_f;
+                g = Custom_g;
             }
             else
             {
-                linksConcrete.Add(AddLink(result, pToeBot, pHeelBot, "RW_Footing", "RW_Datum", "RW_Concrete"));
+                // For DynamicTable and PresetDropdown modes, dimensions are loaded from WallCaseTable (passed in dims)
+                H1 = dims.H1;
+                H2 = dims.H2;
+                b = dims.B;
+                c = dims.C;
+                d = dims.D;
+                e = dims.E;
+                f = dims.F;
+                g = dims.G;
             }
 
-            linksConcrete.Add(AddLink(result, pHeelBot, pHeelTop, "RW_Footing", "RW_Concrete"));
-            linksConcrete.Add(AddLink(result, pHeelTop, pStemBotBack, "RW_Footing", "RW_Concrete"));
-            linksConcrete.Add(AddLink(result, pStemBotBack, pTopBack, "RW_Wall", "RW_Concrete"));
-
-            result.Shapes.Add(new GeometryShape(linksConcrete, "RW_Concrete"));
-
-            // --- PCC Links ---
-            var linksPcc = new List<GeometryLink>();
-            double xPccToe = xToeBot + PccProjection;
-            double xPccHeel = xHeelBot - PccProjection;
+            // Step 2: Compute sequential raw coordinates relative to P1(0,0) as if on Side.Right (sign = 1.0)
+            double p1_x = 0.0;
+            double p1_y = 0.0;
             
-            var pPccToeTop = AddPoint(result, xToeBot * sign, yToeBot);
-            var pPccHeelTop = AddPoint(result, xHeelBot * sign, yHeelBot);
-            var pPccToeProj = AddPoint(result, xPccToe * sign, yToeBot);
-            var pPccHeelProj = AddPoint(result, xPccHeel * sign, yHeelBot);
+            double p2_x = p1_x - w;
+            double p2_y = p1_y;
             
-            var pPccToeBot = AddPoint(result, xPccToe * sign, yToeBot - PccThickness, "RW_PccLeft"); 
-            var pPccHeelBot = AddPoint(result, xPccHeel * sign, yHeelBot - PccThickness, "RW_PccRight"); 
-
-            // Left edge
-            linksPcc.Add(AddLink(result, pPccToeTop, pPccToeProj, "RW_PCC"));
-            linksPcc.Add(AddLink(result, pPccToeProj, pPccToeBot, "RW_PCC", "RW_Datum"));
-
-            // Bottom edge (incorporating key if active)
-            if (hasKey)
-            {
-                var pPccKeyFrontTop = AddPoint(result, xKeyFront * sign, yToeBot - PccThickness);
-                var pPccKeyFrontBot = AddPoint(result, xKeyFront * sign, yKeyBot - PccThickness);
-                var pPccKeyBackBot = AddPoint(result, xKeyBack * sign, yKeyBot - PccThickness);
-                var pPccKeyBackTop = AddPoint(result, xKeyBack * sign, yHeelBot - PccThickness);
-
-                linksPcc.Add(AddLink(result, pPccToeBot, pPccKeyFrontTop, "RW_PCC", "RW_Datum"));
-                linksPcc.Add(AddLink(result, pPccKeyFrontTop, pPccKeyFrontBot, "RW_PCC", "RW_Datum"));
-                linksPcc.Add(AddLink(result, pPccKeyFrontBot, pPccKeyBackBot, "RW_PCC", "RW_Datum"));
-                linksPcc.Add(AddLink(result, pPccKeyBackBot, pPccKeyBackTop, "RW_PCC", "RW_Datum"));
-                linksPcc.Add(AddLink(result, pPccKeyBackTop, pPccHeelBot, "RW_PCC", "RW_Datum"));
-            }
-            else
-            {
-                linksPcc.Add(AddLink(result, pPccToeBot, pPccHeelBot, "RW_PCC", "RW_Datum"));
-            }
-
-            // Right edge
-            linksPcc.Add(AddLink(result, pPccHeelBot, pPccHeelProj, "RW_PCC", "RW_Datum"));
-            linksPcc.Add(AddLink(result, pPccHeelProj, pPccHeelTop, "RW_PCC"));
-
-            // Top boundary (sharing or mirroring footing bottom)
-            if (hasKey)
-            {
-                linksPcc.Add(AddLink(result, pPccHeelTop, pKeyBackTop, "RW_PCC"));
-                linksPcc.Add(AddLink(result, pKeyBackTop, pKeyBackBot, "RW_PCC"));
-                linksPcc.Add(AddLink(result, pKeyBackBot, pKeyFrontBot, "RW_PCC"));
-                linksPcc.Add(AddLink(result, pKeyFrontBot, pKeyFrontTop, "RW_PCC"));
-                linksPcc.Add(AddLink(result, pKeyFrontTop, pPccToeTop, "RW_PCC"));
-            }
-            else
-            {
-                linksPcc.Add(AddLink(result, pPccHeelTop, pPccToeTop, "RW_PCC"));
-            }
-
-            result.Shapes.Add(new GeometryShape(linksPcc, "RW_PCC"));
-
-            // --- Filter ---
-            double xFilterTop = xTopBack - FilterThickness;
-            double xFilterHeel = xHeelTop - FilterThickness;
+            double p11_x = p1_x;
+            double p11_y = p1_y - x1;
             
-            var pFilterTopBack = AddPoint(result, xFilterTop * sign, yTopBack);
-            var pFilterHeelBack = AddPoint(result, xFilterHeel * sign, yHeelTop);
+            double p10_x = p2_x + a;
+            double p10_y = p11_y - x2;
+            
+            double p3_x = p2_x;
+            double p3_y = p2_y - H1;
+            
+            double p4_x = p2_x;
+            double p4_y = p3_y - H2 + f;
+            
+            double p5_x = p4_x - d;
+            double p5_y = p3_y - H2 + g;
+            
+            double p6_x = p5_x;
+            double p6_y = p3_y - H2;
+            
+            double p7_x = p4_x + b + c;
+            double p7_y = p3_y - H2;
+            
+            double p8_x = p7_x;
+            double p8_y = p7_y + e;
+            
+            double p9_x = p4_x + b;
+            double p9_y = p7_y + f;
+            
+            double p12_x = p6_x - PccOffset;
+            double p12_y = p6_y;
+            
+            double p13_x = p12_x;
+            double p13_y = p12_y - PccThickness;
+            
+            double p14_x = p7_x + PccOffset;
+            double p14_y = p13_y;
+            
+            double p15_x = p14_x;
+            double p15_y = p7_y;
+            
+            double p16_x = p10_x + FmThickness;
+            double p16_y = p10_y;
+            
+            // P18 is back-face vector intersection with the ground line plane at Y = -H1.
+            // Vector is between P10 and P9.
+            // Equation of line: X = P10.X + (Y - P10.Y) * ((P9.X - P10.X) / (P9.Y - P10.Y))
+            // We evaluate at Y = -H1.
+            double p18_y = -H1;
+            double p18_x = p10_x;
+            double divisor = p9_y - p10_y;
+            if (Math.Abs(divisor) > 1e-6)
+            {
+                p18_x = p10_x + ((-H1) - p10_y) * ((p9_x - p10_x) / divisor);
+            }
+            
+            double p17_x = p18_x + FmThickness;
+            double p17_y = -H1;
 
-            var lFilterTop = AddLink(result, pFilterTopBack, pTopBack, "RW_Filter");
-            var lFilterBackFace = AddLink(result, pTopBack, pStemBotBack, "RW_Filter");
-            var lFilterHeelTop = AddLink(result, pStemBotBack, pHeelTop, "RW_Filter");
-            var lFilterBot = AddLink(result, pHeelTop, pFilterHeelBack, "RW_Filter");
-            var lFilterOuter = AddLink(result, pFilterHeelBack, pFilterTopBack, "RW_Filter", "RW_Datum");
+            // Step 3: Add Points to GeometryResult (apply sign to X coordinates)
+            var P1  = AddPoint(result, p1_x * sign, p1_y, "RW_Attach", "RW_P1", "Hinge", "Top");
+            var P2  = AddPoint(result, p2_x * sign, p2_y, "RW_TopStemFront", "RW_P2", "Top");
+            var P3  = AddPoint(result, p3_x * sign, p3_y, "RW_BaseStemFront", "RW_P3", "RW_H1");
+            var P4  = AddPoint(result, p4_x * sign, p4_y, "RW_TopToe", "RW_P4", "Top");
+            var P5  = AddPoint(result, p5_x * sign, p5_y, "RW_OuterToe", "RW_P5");
+            var P6  = AddPoint(result, p6_x * sign, p6_y, "RW_FootingToe", "RW_P6", "Datum");
+            var P7  = AddPoint(result, p7_x * sign, p7_y, "RW_FootingHeel", "RW_P7", "Datum");
+            var P8  = AddPoint(result, p8_x * sign, p8_y, "RW_OuterHeel", "RW_P8");
+            var P9  = AddPoint(result, p9_x * sign, p9_y, "RW_TopHeel", "RW_P9");
+            var P10 = AddPoint(result, p10_x * sign, p10_y, "RW_NotchBottom", "RW_P10");
+            var P11 = AddPoint(result, p11_x * sign, p11_y, "RW_NotchTop", "RW_P11", "Top");
+            
+            var P12 = AddPoint(result, p12_x * sign, p12_y, "RW_PccLeft", "RW_P12");
+            var P13 = AddPoint(result, p13_x * sign, p13_y, "RW_PccBottomLeft", "RW_P13", "Datum");
+            var P14 = AddPoint(result, p14_x * sign, p14_y, "RW_PccBottomRight", "RW_P14", "Datum");
+            var P15 = AddPoint(result, p15_x * sign, p15_y, "RW_PccRight", "RW_P15");
+            
+            var P16 = AddPoint(result, p16_x * sign, p16_y, "RW_FilterTopRight", "RW_P16", "Top");
+            var P18 = AddPoint(result, p18_x * sign, p18_y, "RW_FilterBottomLeft", "RW_P18", "RW_H1", "Datum");
+            var P17 = AddPoint(result, p17_x * sign, p17_y, "RW_FilterBottomRight", "RW_P17", "Datum");
 
-            result.Shapes.Add(new GeometryShape(new List<GeometryLink> { lFilterTop, lFilterBackFace, lFilterHeelTop, lFilterBot, lFilterOuter }, "RW_FilterMedia"));
+            // Step 4: Add Links to GeometryResult
+            // Shape 1 (Main Structure) Links: P1 -> P2 -> P3 -> P4 -> P5 -> P6 -> P7 -> P8 -> P9 -> P10 -> P11 -> P1
+            var l1  = AddLink(result, P1, P2, "RW_Link_TopStem", "RW_Top", "Top", "RW_Concrete");
+            var l2  = AddLink(result, P2, P3, "RW_Link_StemFront", "RW_Wall", "RW_Concrete");
+            var l3  = AddLink(result, P3, P4, "RW_Link_StemBaseFront", "RW_Wall", "RW_Concrete");
+            var l4  = AddLink(result, P4, P5, "RW_Link_ToeTop", "RW_Footing", "Top", "RW_Concrete");
+            var l5  = AddLink(result, P5, P6, "RW_Link_ToeOuter", "RW_Footing", "RW_Concrete");
+            var l6  = AddLink(result, P6, P7, "RW_Link_FootingBottom", "RW_Footing", "RW_Datum", "Datum", "RW_Concrete");
+            var l7  = AddLink(result, P7, P8, "RW_Link_HeelOuter", "RW_Footing", "RW_Concrete");
+            var l8  = AddLink(result, P8, P9, "RW_Link_HeelTop", "RW_Footing", "RW_Concrete");
+            var l9  = AddLink(result, P9, P10, "RW_Link_StemBack", "RW_Wall", "RW_Concrete");
+            var l10 = AddLink(result, P10, P11, "RW_Link_NotchSlope", "RW_Wall", "RW_Concrete");
+            var l11 = AddLink(result, P11, P1, "RW_Link_NotchDrop", "RW_Wall", "RW_Concrete");
 
-            // Attach link
-            AddLink(result, pAttach, pTopBack, "RW_Top");
+            // Shape 2 (PCC Bed) Links: P6 -> P12 -> P13 -> P14 -> P15 -> P7 -> P6
+            var l12 = AddLink(result, P6, P12, "RW_Link_PccOffsetLeft", "RW_PCC");
+            var l13 = AddLink(result, P12, P13, "RW_Link_PccLeftFace", "RW_PCC", "RW_Datum", "Datum");
+            var l14 = AddLink(result, P13, P14, "RW_Link_PccBottom", "RW_PCC", "RW_Datum", "Datum");
+            var l15 = AddLink(result, P14, P15, "RW_Link_PccRightFace", "RW_PCC", "RW_Datum", "Datum");
+            var l16 = AddLink(result, P15, P7, "RW_Link_PccOffsetRight", "RW_PCC");
+
+            // Shape 3 (Filter Media) Links: P10 -> P16 -> P17 -> P18 -> P10
+            var l17 = AddLink(result, P10, P16, "RW_Link_FilterTop", "RW_Filter", "Top");
+            var l18 = AddLink(result, P16, P17, "RW_Link_FilterOuter", "RW_Filter", "RW_Datum", "Datum");
+            var l19 = AddLink(result, P17, P18, "RW_Link_FilterBottom", "RW_Filter");
+            var l20 = AddLink(result, P18, P10, "RW_Link_FilterInner", "RW_Filter");
+
+            // Step 5: Add Shapes to GeometryResult
+            result.Shapes.Add(new GeometryShape(new List<GeometryLink> { l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11 }, "Structure_Concrete", "Concrete"));
+            result.Shapes.Add(new GeometryShape(new List<GeometryLink> { l12, l13, l14, l15, l16, l6 }, "PCC_Lean_Concrete", "Subbase"));
+            result.Shapes.Add(new GeometryShape(new List<GeometryLink> { l17, l18, l19, l20 }, "Filter_Drainage_Media", "Gravel"));
 
             return result;
         }

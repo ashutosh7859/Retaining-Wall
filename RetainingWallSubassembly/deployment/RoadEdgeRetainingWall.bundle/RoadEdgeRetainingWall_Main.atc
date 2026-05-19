@@ -3,23 +3,49 @@
 					<GeometryGenerateMode>UseDotNet</GeometryGenerateMode>
           <DotNetClass Assembly="C:\ProgramData\Autodesk\ApplicationPlugins\RoadEdgeRetainingWall.bundle\Contents\Win64\RetainingWall.Civil3D.dll">Subassembly.RoadEdgeRetainingWall</DotNetClass>
 					<Params>
-						<Side DataType="String" DisplayName="Side" Description="Wall side: Left or Right">Left</Side>
-						<UseTable DataType="Bool" DisplayName="Use Table" Description="Retrieve dimensions from the Case Table">1</UseTable>
-						<SelectByHeight DataType="Bool" DisplayName="Select Table By Height" Description="Lookup Case Table by specified Height H1">0</SelectByHeight>
-						<WallCase DataType="Long" DisplayName="Wall Case" Description="Wall case type (2-12) when SelectByHeight is false">2</WallCase>
-						<A DataType="Double" TypeInfo="16" DisplayName="Top Stem Width (A)" Description="Dimension A (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</A>
-						<B DataType="Double" TypeInfo="16" DisplayName="Bottom Stem Width (B)" Description="Dimension B (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</B>
-						<C DataType="Double" TypeInfo="16" DisplayName="Toe Width (C)" Description="Dimension C (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</C>
-						<D DataType="Double" TypeInfo="16" DisplayName="Heel Width (D)" Description="Dimension D (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</D>
-						<E DataType="Double" TypeInfo="16" DisplayName="Toe Thickness (E)" Description="Dimension E (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</E>
-						<F DataType="Double" TypeInfo="16" DisplayName="Junction Thickness (F)" Description="Dimension F (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</F>
-						<G DataType="Double" TypeInfo="16" DisplayName="Heel Thickness (G)" Description="Dimension G (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</G>
-						<H1 DataType="Double" TypeInfo="16" DisplayName="Total Height (H1)" Description="Dimension H1 (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</H1>
-						<H2 DataType="Double" TypeInfo="16" DisplayName="Shear Key Depth (H2)" Description="Dimension H2 (meters). Overrides table if > 0. Direct manual value if UseTable is false.">0.0</H2>
-						<PccThickness DataType="Double" TypeInfo="16" DisplayName="PCC Thickness" Description="Portland cement concrete thickness (meters)">0.150</PccThickness>
-						<PccProjection DataType="Double" TypeInfo="16" DisplayName="PCC Projection" Description="PCC projection distance (meters)">0.150</PccProjection>
-						<FilterThickness DataType="Double" TypeInfo="16" DisplayName="Filter Thickness" Description="Filter material thickness (meters)">0.600</FilterThickness>
-						<WallTopOffset DataType="Double" TypeInfo="16" DisplayName="Wall Top Offset" Description="Offset at wall top (meters)">0.450</WallTopOffset>
+						<Side DataType="Long" DisplayName="Side" Description="Wall side: Left or Right">1
+							<Enum>
+								<Right DisplayName="Right">0</Right>
+								<Left DisplayName="Left">1</Left>
+							</Enum>
+						</Side>
+						<OperatingMode DataType="Long" DisplayName="Operating Mode" Description="Operating configuration mode (Dynamic Table, Preset Dropdown, or Full Custom)">0
+							<Enum>
+								<Dynamic_Table DisplayName="Dynamic Table">0</Dynamic_Table>
+								<Preset_Dropdown DisplayName="Preset Dropdown">1</Preset_Dropdown>
+								<Full_Custom DisplayName="Full Custom">2</Full_Custom>
+							</Enum>
+						</OperatingMode>
+						<WallPreset DataType="Long" DisplayName="Wall Preset" Description="Standard design case preset (Type 2 to 12)">2
+							<Enum>
+								<Type_2 DisplayName="Type 2">2</Type_2>
+								<Type_3 DisplayName="Type 3">3</Type_3>
+								<Type_4 DisplayName="Type 4">4</Type_4>
+								<Type_5 DisplayName="Type 5">5</Type_5>
+								<Type_6 DisplayName="Type 6">6</Type_6>
+								<Type_7 DisplayName="Type 7">7</Type_7>
+								<Type_8 DisplayName="Type 8">8</Type_8>
+								<Type_9 DisplayName="Type 9">9</Type_9>
+								<Type_10 DisplayName="Type 10">10</Type_10>
+								<Type_11 DisplayName="Type 11">11</Type_11>
+								<Type_12 DisplayName="Type 12">12</Type_12>
+							</Enum>
+						</WallPreset>
+						<w DataType="Double" TypeInfo="16" DisplayName="Stem Top Width (w)" Description="Top stem width P1 to P2 (meters)">0.450</w>
+						<x1 DataType="Double" TypeInfo="16" DisplayName="Notch Drop (x1)" Description="Vertical drop from P1 to P11 (meters)">0.250</x1>
+						<x2 DataType="Double" TypeInfo="16" DisplayName="Notch Slope Drop (x2)" Description="Vertical drop of notch slope P11 to P10 (meters)">0.250</x2>
+						<a DataType="Double" TypeInfo="16" DisplayName="Notch Recess (a)" Description="Recess thickness at P10 (meters)">0.450</a>
+						<Custom_H1 DataType="Double" TypeInfo="16" DisplayName="Stem Height (H1)" Description="Manual stem height H1 in Custom mode (meters)">3.000</Custom_H1>
+						<Custom_b DataType="Double" TypeInfo="16" DisplayName="Stem Base Width (b)" Description="Stem thickness at footing plane in Custom mode (meters)">0.450</Custom_b>
+						<Custom_c DataType="Double" TypeInfo="16" DisplayName="Heel Projection (c)" Description="Heel projection length in Custom mode (meters)">1.450</Custom_c>
+						<Custom_d DataType="Double" TypeInfo="16" DisplayName="Toe Projection (d)" Description="Toe projection length in Custom mode (meters)">0.700</Custom_d>
+						<Custom_e DataType="Double" TypeInfo="16" DisplayName="Heel Edge Thickness (e)" Description="Vertical thickness of outer heel face in Custom mode (meters)">0.250</Custom_e>
+						<Custom_f DataType="Double" TypeInfo="16" DisplayName="Max Footing Thickness (f)" Description="Maximum footing depth at stem junction in Custom mode (meters)">0.350</Custom_f>
+						<Custom_g DataType="Double" TypeInfo="16" DisplayName="Toe Edge Thickness (g)" Description="Vertical thickness of outer toe face in Custom mode (meters)">0.250</Custom_g>
+						<Custom_H2 DataType="Double" TypeInfo="16" DisplayName="Base Depth (H2)" Description="Foundation depth from GL to footing bottom in Custom mode (meters)">0.850</Custom_H2>
+						<PccThickness DataType="Double" TypeInfo="16" DisplayName="Mud Mat Thickness (PCC)" Description="Portland cement concrete thickness (meters)">0.150</PccThickness>
+						<PccOffset DataType="Double" TypeInfo="16" DisplayName="Mud Mat Offset (PCC)" Description="PCC offset distance (meters)">0.150</PccOffset>
+						<FmThickness DataType="Double" TypeInfo="16" DisplayName="Filter Media Thickness" Description="Filter media thickness (meters)">0.600</FmThickness>
 					</Params>
 				</AeccDbSubassembly>
 				<Units>m</Units>
