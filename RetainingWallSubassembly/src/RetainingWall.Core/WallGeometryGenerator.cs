@@ -4,69 +4,41 @@ using System.Collections.Generic;
 namespace RetainingWall.Core
 {
     /// <summary>
-    /// Dictates how the retaining wall dimensions are determined.
-    /// </summary>
-    public enum OperatingMode
-    {
-        DynamicTable = 0,
-        PresetDropdown = 1,
-        FullCustom = 2
-    }
-
-    /// <summary>
-    /// Represents standard wall structural case table presets (Type 2 to Type 12).
-    /// </summary>
-    public enum WallPreset
-    {
-        Type2 = 2,
-        Type3 = 3,
-        Type4 = 4,
-        Type5 = 5,
-        Type6 = 6,
-        Type7 = 7,
-        Type8 = 8,
-        Type9 = 9,
-        Type10 = 10,
-        Type11 = 11,
-        Type12 = 12
-    }
-
-    /// <summary>
     /// Generates retaining wall geometry based on customizable parameters.
     /// </summary>
     public class WallGeometryGenerator
     {
         // Core Configuration Control
-        public OperatingMode OperatingMode { get; set; } = OperatingMode.DynamicTable;
-        public WallPreset WallPreset { get; set; } = WallPreset.Type2;
+        public OperatingMode OperatingMode { get; set; } = WallConfig.DefaultOperatingMode;
+        public WallPreset WallPreset { get; set; } = WallConfig.DefaultWallPreset;
 
         // Dimensions - Stem Notch & Batter
-        public double w { get; set; } = 0.450;
-        public double x1 { get; set; } = 0.250;
-        public double x2 { get; set; } = 0.250;
-        public double a { get; set; } = 0.450;
+        public double w { get; set; } = WallConfig.DefaultW;
+        public double x1 { get; set; } = WallConfig.DefaultX1;
+        public double x2 { get; set; } = WallConfig.DefaultX2;
+        public double a { get; set; } = WallConfig.DefaultA;
 
         // Dimensions - Custom Footing & Base (Used only in Full Custom)
-        public double Custom_H1 { get; set; } = 3.000;
-        public double Custom_b { get; set; } = 0.450;
-        public double Custom_c { get; set; } = 1.450;
-        public double Custom_d { get; set; } = 0.700;
-        public double Custom_e { get; set; } = 0.250;
-        public double Custom_f { get; set; } = 0.350;
-        public double Custom_g { get; set; } = 0.250;
-        public double Custom_H2 { get; set; } = 0.850;
+        public double Custom_H1 { get; set; } = WallConfig.DefaultCustomH1;
+        public double Custom_b { get; set; } = WallConfig.DefaultCustomB;
+        public double Custom_c { get; set; } = WallConfig.DefaultCustomC;
+        public double Custom_d { get; set; } = WallConfig.DefaultCustomD;
+        public double Custom_e { get; set; } = WallConfig.DefaultCustomE;
+        public double Custom_f { get; set; } = WallConfig.DefaultCustomF;
+        public double Custom_g { get; set; } = WallConfig.DefaultCustomG;
+        public double Custom_H2 { get; set; } = WallConfig.DefaultCustomH2;
 
         // Foundations - PCC Mud Mat
-        public double PccThickness { get; set; } = 0.150;
-        public double PccOffset { get; set; } = 0.150;
+        public double PccThickness { get; set; } = WallConfig.DefaultPccThickness;
+        public double PccOffset { get; set; } = WallConfig.DefaultPccOffset;
 
         // Backfill - Filter Media
-        public double FmThickness { get; set; } = 0.600;
+        public double FmThickness { get; set; } = WallConfig.DefaultFmThickness;
 
         public GeometryResult Generate(WallDimensions dims, Side side)
         {
             var result = new GeometryResult();
-            double sign = side == Side.Right ? 1.0 : -1.0;
+            double sign = side == Side.Left ? 1.0 : -1.0;
 
             // Step 1: Resolve dimensions based on operating mode
             double H1, H2, b, c, d, e, f, g;

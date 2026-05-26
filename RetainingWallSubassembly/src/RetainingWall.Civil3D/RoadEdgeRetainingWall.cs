@@ -26,62 +26,62 @@ namespace RetainingWall.Civil3D
             var paramsLong = corridorState.ParamsLong;
             var paramsDouble = corridorState.ParamsDouble;
 
-            var sideParam = paramsLong.Add("Side", 1);
+            var sideParam = paramsLong.Add("Side", (int)WallConfig.DefaultSide);
             if (sideParam != null) { sideParam.DisplayName = "Side"; sideParam.Description = "Wall side: Left or Right"; }
 
-            var modeParam = paramsLong.Add("OperatingMode", 0);
+            var modeParam = paramsLong.Add("OperatingMode", (int)WallConfig.DefaultOperatingMode);
             if (modeParam != null) { modeParam.DisplayName = "Operating Mode"; modeParam.Description = "Operating configuration mode (Dynamic Table, Preset Dropdown, or Full Custom)"; }
 
-            var presetParam = paramsLong.Add("WallPreset", 2);
+            var presetParam = paramsLong.Add("WallPreset", (int)WallConfig.DefaultWallPreset);
             if (presetParam != null) { presetParam.DisplayName = "Wall Preset"; presetParam.Description = "Standard design case preset (Type 2 to 12)"; }
 
             // Dimensions - Stem Notch & Batter
-            var wParam = paramsDouble.Add("w", 0.450);
+            var wParam = paramsDouble.Add("w", WallConfig.DefaultW);
             if (wParam != null) { wParam.DisplayName = "Stem Top Width (w)"; wParam.Description = "Top stem width P1 to P2 (meters)"; }
 
-            var x1Param = paramsDouble.Add("x1", 0.250);
+            var x1Param = paramsDouble.Add("x1", WallConfig.DefaultX1);
             if (x1Param != null) { x1Param.DisplayName = "Notch Drop (x1)"; x1Param.Description = "Vertical drop from P1 to P11 (meters)"; }
 
-            var x2Param = paramsDouble.Add("x2", 0.250);
+            var x2Param = paramsDouble.Add("x2", WallConfig.DefaultX2);
             if (x2Param != null) { x2Param.DisplayName = "Notch Slope Drop (x2)"; x2Param.Description = "Vertical drop of notch slope P11 to P10 (meters)"; }
 
-            var aParam = paramsDouble.Add("a", 0.450);
+            var aParam = paramsDouble.Add("a", WallConfig.DefaultA);
             if (aParam != null) { aParam.DisplayName = "Notch Recess (a)"; aParam.Description = "Recess thickness at P10 (meters)"; }
 
             // Dimensions - Custom Footing & Base (Full Custom only)
-            var h1Param = paramsDouble.Add("Custom_H1", 3.000);
+            var h1Param = paramsDouble.Add("Custom_H1", WallConfig.DefaultCustomH1);
             if (h1Param != null) { h1Param.DisplayName = "Stem Height (H1)"; h1Param.Description = "Manual stem height H1 in Custom mode (meters)"; }
 
-            var bParam = paramsDouble.Add("Custom_b", 0.450);
+            var bParam = paramsDouble.Add("Custom_b", WallConfig.DefaultCustomB);
             if (bParam != null) { bParam.DisplayName = "Stem Base Width (b)"; bParam.Description = "Stem thickness at footing plane in Custom mode (meters)"; }
 
-            var cParam = paramsDouble.Add("Custom_c", 1.450);
+            var cParam = paramsDouble.Add("Custom_c", WallConfig.DefaultCustomC);
             if (cParam != null) { cParam.DisplayName = "Heel Projection (c)"; cParam.Description = "Heel projection length in Custom mode (meters)"; }
 
-            var dParam = paramsDouble.Add("Custom_d", 0.700);
+            var dParam = paramsDouble.Add("Custom_d", WallConfig.DefaultCustomD);
             if (dParam != null) { dParam.DisplayName = "Toe Projection (d)"; dParam.Description = "Toe projection length in Custom mode (meters)"; }
 
-            var eParam = paramsDouble.Add("Custom_e", 0.250);
+            var eParam = paramsDouble.Add("Custom_e", WallConfig.DefaultCustomE);
             if (eParam != null) { eParam.DisplayName = "Heel Edge Thickness (e)"; eParam.Description = "Vertical thickness of outer heel face in Custom mode (meters)"; }
 
-            var fParam = paramsDouble.Add("Custom_f", 0.350);
+            var fParam = paramsDouble.Add("Custom_f", WallConfig.DefaultCustomF);
             if (fParam != null) { fParam.DisplayName = "Max Footing Thickness (f)"; fParam.Description = "Maximum footing depth at stem junction in Custom mode (meters)"; }
 
-            var gParam = paramsDouble.Add("Custom_g", 0.250);
+            var gParam = paramsDouble.Add("Custom_g", WallConfig.DefaultCustomG);
             if (gParam != null) { gParam.DisplayName = "Toe Edge Thickness (g)"; gParam.Description = "Vertical thickness of outer toe face in Custom mode (meters)"; }
 
-            var h2Param = paramsDouble.Add("Custom_H2", 0.850);
+            var h2Param = paramsDouble.Add("Custom_H2", WallConfig.DefaultCustomH2);
             if (h2Param != null) { h2Param.DisplayName = "Base Depth (H2)"; h2Param.Description = "Foundation depth from GL to footing bottom in Custom mode (meters)"; }
 
             // Foundations - PCC Mud Mat
-            var pccTParam = paramsDouble.Add("PccThickness", 0.150);
+            var pccTParam = paramsDouble.Add("PccThickness", WallConfig.DefaultPccThickness);
             if (pccTParam != null) { pccTParam.DisplayName = "Mud Mat Thickness (PCC)"; pccTParam.Description = "Portland cement concrete thickness (meters)"; }
 
-            var pccOParam = paramsDouble.Add("PccOffset", 0.150);
+            var pccOParam = paramsDouble.Add("PccOffset", WallConfig.DefaultPccOffset);
             if (pccOParam != null) { pccOParam.DisplayName = "Mud Mat Offset (PCC)"; pccOParam.Description = "PCC offset distance (meters)"; }
 
             // Backfill - Filter Media
-            var fmParam = paramsDouble.Add("FmThickness", 0.600);
+            var fmParam = paramsDouble.Add("FmThickness", WallConfig.DefaultFmThickness);
             if (fmParam != null) { fmParam.DisplayName = "Filter Media Thickness"; fmParam.Description = "Filter media thickness (meters)"; }
         }
 
@@ -119,46 +119,48 @@ namespace RetainingWall.Civil3D
         {
             if (corridorState == null) return;
 
-            var sideInt = GetIntParam(corridorState, "Side", 1); // 0 = Right, 1 = Left
-            var side = sideInt == 0 ? RetainingWall.Core.Side.Right : RetainingWall.Core.Side.Left;
+            var sideInt = GetIntParam(corridorState, "Side", 1);
+            // Civil 3D maps Side parameter to integers based on the ATC enum.
+            // Our ATC maps: Right = 0, Left = 1.
+            var side = (sideInt == 1) ? RetainingWall.Core.Side.Left : RetainingWall.Core.Side.Right;
             double sign = side == RetainingWall.Core.Side.Left ? 1.0 : -1.0;
 
             // Fetch Core parameters
-            var operatingMode = (OperatingMode)GetIntParam(corridorState, "OperatingMode", 0);
-            var wallPreset = (WallPreset)GetIntParam(corridorState, "WallPreset", 2);
+            var operatingMode = (OperatingMode)GetIntParam(corridorState, "OperatingMode", (int)WallConfig.DefaultOperatingMode);
+            var wallPreset = (WallPreset)GetIntParam(corridorState, "WallPreset", (int)WallConfig.DefaultWallPreset);
 
             // Fetch Dimensions - Stem Notch & Batter
-            double w = GetDoubleParam(corridorState, "w", 0.450);
-            double x1 = GetDoubleParam(corridorState, "x1", 0.250);
-            double x2 = GetDoubleParam(corridorState, "x2", 0.250);
-            double a = GetDoubleParam(corridorState, "a", 0.450);
+            double w = GetDoubleParam(corridorState, "w", WallConfig.DefaultW);
+            double x1 = GetDoubleParam(corridorState, "x1", WallConfig.DefaultX1);
+            double x2 = GetDoubleParam(corridorState, "x2", WallConfig.DefaultX2);
+            double a = GetDoubleParam(corridorState, "a", WallConfig.DefaultA);
 
             // Fetch Custom parameters
-            double custom_H1 = GetDoubleParam(corridorState, "Custom_H1", 3.000);
-            double custom_b = GetDoubleParam(corridorState, "Custom_b", 0.450);
-            double custom_c = GetDoubleParam(corridorState, "Custom_c", 1.450);
-            double custom_d = GetDoubleParam(corridorState, "Custom_d", 0.700);
-            double custom_e = GetDoubleParam(corridorState, "Custom_e", 0.250);
-            double custom_f = GetDoubleParam(corridorState, "Custom_f", 0.350);
-            double custom_g = GetDoubleParam(corridorState, "Custom_g", 0.250);
-            double custom_H2 = GetDoubleParam(corridorState, "Custom_H2", 0.850);
+            double custom_H1 = GetDoubleParam(corridorState, "Custom_H1", WallConfig.DefaultCustomH1);
+            double custom_b = GetDoubleParam(corridorState, "Custom_b", WallConfig.DefaultCustomB);
+            double custom_c = GetDoubleParam(corridorState, "Custom_c", WallConfig.DefaultCustomC);
+            double custom_d = GetDoubleParam(corridorState, "Custom_d", WallConfig.DefaultCustomD);
+            double custom_e = GetDoubleParam(corridorState, "Custom_e", WallConfig.DefaultCustomE);
+            double custom_f = GetDoubleParam(corridorState, "Custom_f", WallConfig.DefaultCustomF);
+            double custom_g = GetDoubleParam(corridorState, "Custom_g", WallConfig.DefaultCustomG);
+            double custom_H2 = GetDoubleParam(corridorState, "Custom_H2", WallConfig.DefaultCustomH2);
 
             // Fetch Foundations & Backfill parameters
-            double pccThickness = GetDoubleParam(corridorState, "PccThickness", 0.150);
-            double pccOffset = GetDoubleParam(corridorState, "PccOffset", 0.150);
-            double fmThickness = GetDoubleParam(corridorState, "FmThickness", 0.600);
+            double pccThickness = GetDoubleParam(corridorState, "PccThickness", WallConfig.DefaultPccThickness);
+            double pccOffset = GetDoubleParam(corridorState, "PccOffset", WallConfig.DefaultPccOffset);
+            double fmThickness = GetDoubleParam(corridorState, "FmThickness", WallConfig.DefaultFmThickness);
 
             // Parameter safety check and warning log
             if (operatingMode != OperatingMode.FullCustom)
             {
-                if (Math.Abs(custom_H1 - 3.000) > 0.001 ||
-                    Math.Abs(custom_b - 0.450) > 0.001 ||
-                    Math.Abs(custom_c - 1.450) > 0.001 ||
-                    Math.Abs(custom_d - 0.700) > 0.001 ||
-                    Math.Abs(custom_e - 0.250) > 0.001 ||
-                    Math.Abs(custom_f - 0.350) > 0.001 ||
-                    Math.Abs(custom_g - 0.250) > 0.001 ||
-                    Math.Abs(custom_H2 - 0.850) > 0.001)
+                if (Math.Abs(custom_H1 - WallConfig.DefaultCustomH1) > 0.001 ||
+                    Math.Abs(custom_b - WallConfig.DefaultCustomB) > 0.001 ||
+                    Math.Abs(custom_c - WallConfig.DefaultCustomC) > 0.001 ||
+                    Math.Abs(custom_d - WallConfig.DefaultCustomD) > 0.001 ||
+                    Math.Abs(custom_e - WallConfig.DefaultCustomE) > 0.001 ||
+                    Math.Abs(custom_f - WallConfig.DefaultCustomF) > 0.001 ||
+                    Math.Abs(custom_g - WallConfig.DefaultCustomG) > 0.001 ||
+                    Math.Abs(custom_H2 - WallConfig.DefaultCustomH2) > 0.001)
                 {
                     try
                     {
@@ -332,14 +334,14 @@ namespace RetainingWall.Civil3D
                 {
                     lookupHeight = 12.0;
                 }
-                dims = WallCaseTable.GetDimensionsByHeight(lookupHeight);
+                dims = WallConfig.GetDimensionsByHeight(lookupHeight);
             }
             else if (operatingMode == OperatingMode.PresetDropdown)
             {
                 int presetNum = (int)wallPreset;
                 if (presetNum < 2) presetNum = 2;
                 if (presetNum > 12) presetNum = 12;
-                dims = WallCaseTable.GetDimensions(presetNum);
+                dims = WallConfig.GetDimensions(presetNum);
             }
             else // FullCustom
             {
@@ -370,6 +372,7 @@ namespace RetainingWall.Civil3D
                 FmThickness = fmThickness
             };
 
+            // Generate geometry using the resolved side parameter.
             var result = generator.Generate(dims, side);
 
             var corePointsToC3DPoints = new Dictionary<GeometryPoint, Autodesk.Civil.DatabaseServices.IPoint>();

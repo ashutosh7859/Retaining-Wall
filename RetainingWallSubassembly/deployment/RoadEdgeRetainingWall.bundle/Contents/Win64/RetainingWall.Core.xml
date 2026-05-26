@@ -47,10 +47,36 @@
         </member>
         <member name="T:RetainingWall.Core.WallCaseTable">
             <summary>
-            Provides access to the standard retaining wall case table and lookup utilities.
+            Legacy redirect class for WallCaseTable, now centralized in WallConfig.
             </summary>
         </member>
         <member name="M:RetainingWall.Core.WallCaseTable.GetDimensions(System.Int32)">
+            <summary>
+            Gets standard dimensions. Redirects to WallConfig.GetDimensions.
+            </summary>
+        </member>
+        <member name="M:RetainingWall.Core.WallCaseTable.GetDimensionsByHeight(System.Double)">
+            <summary>
+            Gets standard dimensions by height. Redirects to WallConfig.GetDimensionsByHeight.
+            </summary>
+        </member>
+        <member name="T:RetainingWall.Core.OperatingMode">
+            <summary>
+            Dictates how the retaining wall dimensions are determined.
+            </summary>
+        </member>
+        <member name="T:RetainingWall.Core.WallPreset">
+            <summary>
+            Represents standard wall structural case table presets (Type 2 to Type 12).
+            </summary>
+        </member>
+        <member name="T:RetainingWall.Core.WallConfig">
+            <summary>
+            Centralized configuration, default settings, and case tables for the Retaining Wall subassembly.
+            All physical dimensions are in metres.
+            </summary>
+        </member>
+        <member name="M:RetainingWall.Core.WallConfig.GetDimensions(System.Int32)">
             <summary>
             Gets the standard dimensions for the specified wall case.
             Dimensions are converted from mm to metres internally.
@@ -59,7 +85,7 @@
             <returns>A <see cref="T:RetainingWall.Core.WallDimensions"/> instance containing the dimensions in metres.</returns>
             <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the wall case is not between 2 and 12.</exception>
         </member>
-        <member name="M:RetainingWall.Core.WallCaseTable.GetDimensionsByHeight(System.Double)">
+        <member name="M:RetainingWall.Core.WallConfig.GetDimensionsByHeight(System.Double)">
             <summary>
             Gets the standard dimensions for a case that best matches the specified total height H1.
             Finds the first case where the standard H1 is greater than or equal to the specified height.
@@ -109,16 +135,6 @@
         </member>
         <member name="P:RetainingWall.Core.WallDimensions.H2">
             <summary>Foundation depth from GL to footing bottom (H2) in metres.</summary>
-        </member>
-        <member name="T:RetainingWall.Core.OperatingMode">
-            <summary>
-            Dictates how the retaining wall dimensions are determined.
-            </summary>
-        </member>
-        <member name="T:RetainingWall.Core.WallPreset">
-            <summary>
-            Represents standard wall structural case table presets (Type 2 to Type 12).
-            </summary>
         </member>
         <member name="T:RetainingWall.Core.WallGeometryGenerator">
             <summary>
