@@ -323,8 +323,16 @@ namespace RetainingWall.Civil3D
                 yGL = yGL - corridorState.CurrentElevation;
             }
 
-            double measuredH1 = -yGL;
-            if (measuredH1 < 0.1) measuredH1 = 0.1;
+            double measuredH1;
+            if (corridorState.Mode == CorridorMode.Layout)
+            {
+                measuredH1 = 3.0; // Use a sensible 3m default height in Assembly Layout view
+            }
+            else
+            {
+                measuredH1 = -yGL;
+                if (measuredH1 < 0.1) measuredH1 = 0.1;
+            }
 
             WallDimensions dims;
             if (operatingMode == OperatingMode.DynamicTable)
@@ -334,7 +342,18 @@ namespace RetainingWall.Civil3D
                 {
                     lookupHeight = 12.0;
                 }
-                dims = WallConfig.GetDimensionsByHeight(lookupHeight);
+                var baseDims = WallConfig.GetDimensionsByHeight(lookupHeight);
+                dims = new WallDimensions(
+                    baseDims.A,
+                    baseDims.B,
+                    baseDims.C,
+                    baseDims.D,
+                    baseDims.E,
+                    baseDims.F,
+                    baseDims.G,
+                    measuredH1,
+                    baseDims.H2
+                );
             }
             else if (operatingMode == OperatingMode.PresetDropdown)
             {
